@@ -74,6 +74,7 @@ table{width:100%;border-collapse:collapse;font-size:.85rem}td,th{border-bottom:1
 <div id="pm" class="modal"><div class="box wide" id="pm-body"></div></div>
 <div id="cm" class="modal"><div class="box" id="cm-body"></div></div>
 <div id="oe" class="modal"><div class="box wide" id="oe-body"></div></div>
+<div id="cd" class="modal"><div class="box wide" id="cd-body"></div></div>
 <div id="cu" class="modal"><div class="box" id="cu-body"></div></div>
 <div id="toast" class="toast"></div>
 <script>
@@ -101,7 +102,7 @@ function start(){
  sub(db.collection('perfumes'),s=>{S.prods=s.docs.map(d=>d.data()).sort((a,b)=>a.id-b.id);fill()});
  sub(db.collection('coupons'),s=>{S.cpn=s.docs.map(d=>Object.assign({code:d.id},d.data(),{_id:d.id}));fill()});
  sub(db.collection('reviews'),s=>{if(S._revLoaded)s.docChanges().forEach(c=>{if(c.type==='added'&&c.doc.data().status==='pending')alertRev(c.doc.data())});S._revLoaded=true;S.rev=s.docs.map(d=>Object.assign(d.data(),{_id:d.id}));nav();fill();maybeSeed()});
- sub(db.collection('users'),s=>{S.users=s.docs.map(d=>Object.assign({uid:d.id},d.data()));if(S.tab==='crm')crmFill()});
+ sub(db.collection('users'),s=>{S.users=s.docs.map(d=>Object.assign({uid:d.id},d.data()));try{usersChanged(s)}catch(e){}if(S.tab==='crm')crmFill()});
  sub(db.collection('customers'),s=>{S.cust=s.docs.map(d=>Object.assign({_id:d.id},d.data()));if(S.tab==='crm')crmFill()});
  sub(db.doc('settings/announcement'),d=>{S.ann=d.exists?d.data():{}});
  sub(db.doc('settings/banner'),d=>{S.bn=d.exists?d.data():{};if(S.tab==='set'&&!S.dirty)view()});
@@ -115,14 +116,14 @@ function start(){
 }
 var nav=function(){const p=S.rev.filter(r=>r.status==='pending').length;$('nav').innerHTML=TABS.map(t=>`<button class="${S.tab===t[0]?'on':''}" onclick="S.tab='${t[0]}';S.dirty=false;S.shipEdit=null;S.catEdit=null;nav();view()">${t[1]}${t[0]==='rev'&&p?`<b>${p}</b>`:''}${t[0]==='trash'&&trashN()?`<b>${trashN()}</b>`:''}</button>`).join('')}
 function view(){const v=$('v'),t=S.tab;
- if(t==='orders')v.innerHTML=`<div id="stt" class="grid" style="margin:.6rem 0"></div><div class="row"><input class="field" placeholder="بحث: كود الفاتورة أو الاسم أو الهاتف" value="${esc(S.q)}" oninput="S.q=this.value;fill()"><select onchange="S.sort=this.value;fill()"><option value="time">الأحدث</option><option value="id">رقم الفاتورة</option><option value="total">المبلغ</option></select><select onchange="S.st=this.value;fill()"><option value="all">كل الحالات</option>${ST.map(s=>`<option>${s}</option>`).join('')}</select></div><div class="row"><button class="btn g s" onclick="exp('o')">تصدير الطلبات (Excel)</button><button class="btn g s" onclick="exp('c')">تصدير العملاء (Excel)</button><button class="btn s" onclick="markAllSeen()">✔ تمت قراءة الكل</button></div><div id="ol"></div>`;
+ if(t==='orders')v.innerHTML=`${archBar()}<div id="stt" class="grid" style="margin:.6rem 0"></div><div class="row"><input class="field" placeholder="بحث: كود الفاتورة أو الاسم أو الهاتف" value="${esc(S.q)}" oninput="S.q=this.value;fill()"><select onchange="S.sort=this.value;fill()"><option value="time" ${S.sort==='old'?'':'selected'}>الأحدث أولًا</option><option value="old" ${S.sort==='old'?'selected':''}>الأقدم أولًا</option></select><select onchange="S.pay=this.value;fill()"><option value="all">كل حالات الدفع</option><option value="paid" ${S.pay==='paid'?'selected':''}>مدفوعة بالكامل</option><option value="partial" ${S.pay==='partial'?'selected':''}>مدفوعة جزئيًا</option><option value="unpaid" ${S.pay==='unpaid'?'selected':''}>غير مدفوعة</option></select><select onchange="S.st=this.value;fill()"><option value="all">كل الحالات</option>${ST.map(s=>`<option>${s}</option>`).join('')}</select></div><div class="row"><button class="btn g s" onclick="exp('o')">تصدير الطلبات (Excel)</button><button class="btn g s" onclick="exp('c')">تصدير العملاء (Excel)</button><button class="btn s" onclick="markAllSeen()">✔ تمت قراءة الكل</button></div><div id="ol"></div>`;
  if(t==='cat')v.innerHTML=catView();
  if(t==='ship'){if(!S.shipEdit)S.shipEdit=(S.ship.length?S.ship:DEFGOV).map(g=>Object.assign({},g));v.innerHTML=`<div class="card"><b class="gold">المحافظات وأسعار الشحن</b><p class="mut">${S.ship.length?'الأسعار دي هي المعتمدة حاليًا في المتجر.':'لسه ماتحفظتش في السحابة — دي القائمة الافتراضية (27 محافظة). اضغط حفظ لتفعيلها.'}</p><div id="shl"></div><div class="row"><button class="btn g" onclick="S.dirty=true;S.shipEdit.push({id:'g'+Date.now(),name:'',rate:60});shRows()">+ إضافة محافظة</button><button class="btn" onclick="saveShip()">حفظ الأسعار</button></div></div>`;shRows()}
  if(t==='pol')v.innerHTML=polView();
  if(t==='ret'){v.innerHTML=`<div class="card"><b class="gold">تسجيل مرتجع / تالف</b><select id="rt-order" onchange="S.rf=this.value;rtItems()"><option value="">اختر الأوردر</option>${S.orders.slice().sort((a,b)=>String(b.orderId).localeCompare(String(a.orderId))).map(o=>`<option value="${esc(o.orderId)}" ${S.rf===o.orderId?'selected':''}>#${esc(o.orderId)} — ${esc((o.customer||{}).name)}</option>`).join('')}</select><div id="rt-items"></div><div class="row"><select id="rt-act"><option value="restock">إرجاع الكمية للمخزون</option><option value="damaged">تالف (لا يعود للمخزون)</option></select><input class="field" id="rt-amt" type="number" placeholder="مبلغ الاسترداد (ج.م)"></div><input class="field" id="rt-why" placeholder="سبب المرتجع"><button class="btn" onclick="saveRet()">تسجيل</button></div><div id="rtl"></div>`;rtItems()}
  if(t==='cpn')v.innerHTML=`<div class="card"><b class="gold">كود خصم جديد</b><div class="row"><input class="field" id="cf-code" placeholder="الكود (مثال SHADEN10)"><select id="cf-type"><option value="percent">نسبة %</option><option value="fixed">مبلغ ثابت</option></select><input class="field" id="cf-val" type="number" placeholder="القيمة"></div><div class="row"><label><input type="checkbox" id="cf-on" checked> مفعّل</label><label><input type="checkbox" id="cf-bar"> يظهر في شريط الإعلان</label></div><button class="btn" onclick="saveCpn()">حفظ الكود</button></div><div id="cl"></div>`;
  if(t==='rev')v.innerHTML='<div id="rl"></div>';
- if(t==='set'){const a=S.ann,g=S.gen;v.innerHTML=`<div class="card"><b class="gold">شريط الإعلان</b><label class="row"><input type="checkbox" id="an-on" ${a.enabled!==false?'checked':''} style="flex:none"> تفعيل الشريط</label><input class="field" id="an-text" placeholder="نص الإعلان (اكتب أي نص تريده — يظهر متحركًا أعلى المتجر)" value="${esc(a.text||DEF_ANN)}"><label>اللون <input type="color" id="an-color" value="${esc(a.color||'#4F46E5')}"></label></div><div class="card"><b class="gold">بنر المتجر الرئيسي (سلايدر)</b><p class="mut" style="font-size:.85rem">أضف صورة أو أكتر (حد أقصى 5). لو أكتر من صورة بتتبدل كل ثانيتين تلقائيًا والعميل يقدر يحركها بإيده بالسحب أو الأسهم. لو مفيش صور بيظهر البنر الافتراضي.</p>${bnSlides().map((u,i)=>`<div class="row"><img src="${esc(u)}" alt="" style="width:130px;border-radius:10px"><span class="mut n">صورة ${i+1}</span><button class="btn s r n" onclick="bnDel(${i})">حذف</button></div>`).join('')||'<p class="mut">البنر الافتراضي شغال حاليًا.</p>'}<input class="field" id="bn-url" placeholder="رابط صورة جديدة (https://...)"><div class="row"><button class="btn s" onclick="bnAddUrl()">إضافة الرابط</button><label class="btn s g n" style="cursor:pointer">📤 رفع صورة<input type="file" accept="image/*" style="display:none" onchange="bnPick(this)"></label><button class="btn s g" onclick="resetBanner()">استرجاع الافتراضي</button></div></div><div class="card"><b class="gold">ربط Google Sheets</b><input class="field" id="an-sheet" placeholder="رابط Web App (ينتهي بـ /exec)" value="${esc(g.sheetsUrl)}"><input class="field" id="an-key" type="password" placeholder="مفتاح الأدمن ADMIN_KEY (بيتحفظ على جهازك فقط)" value="${esc(localStorage.getItem('sh_key')||'')}"><p class="mut" style="font-size:.8rem">نفس القيمة اللي حطيتها في Script properties باسم ADMIN_KEY. بيُستخدم لتحديث الحالة في الشيت.</p></div><button class="btn" onclick="saveSet()">حفظ الإعدادات</button>`}
+ if(t==='set'){const a=S.ann,g=S.gen;v.innerHTML=`<div class="card"><b class="gold">شريط الإعلان</b><label class="row"><input type="checkbox" id="an-on" ${a.enabled!==false?'checked':''} style="flex:none"> تفعيل الشريط</label><input class="field" id="an-text" placeholder="نص الإعلان (اكتب أي نص تريده — يظهر متحركًا أعلى المتجر)" value="${esc(a.text||DEF_ANN)}"><label>اللون <input type="color" id="an-color" value="${esc(a.color||'#4F46E5')}"></label></div><div class="card"><b class="gold">البنرات ومعرض الصور</b><p class="mut" style="font-size:.88rem">اتنقلوا لتبويب <a href="#" onclick="S.tab='media';nav();view();return false">الوسائط (بنرات ومعرض)</a> — فيه إضافة / حذف / إخفاء / ترتيب ومقاسات الرفع.</p></div><div class="card"><b class="gold">ربط Google Apps Script (الشيت + إيميلات الحالة + كود الاسترجاع OTP)</b><input class="field" id="an-sheet" placeholder="رابط Web App (ينتهي بـ /exec)" value="${esc(g.sheetsUrl)}"><input class="field" id="an-key" type="password" placeholder="مفتاح الأدمن ADMIN_KEY (بيتحفظ على جهازك فقط)" value="${esc(localStorage.getItem('sh_key')||'')}"><p class="mut" style="font-size:.8rem">نفس القيمة اللي حطيتها في Script properties باسم ADMIN_KEY. بيُستخدم لتحديث الحالة وإرسال الإيميلات وحذف الحسابات.</p><button class="btn s g" type="button" onclick="testScript()">🔌 اختبار الاتصال بالسكربت</button></div><button class="btn" onclick="saveSet()">حفظ الإعدادات</button>`}
  if(t==='fin')v.innerHTML='<div id="fins"></div>'+finCtl()+'<div id="finl"></div>';
  if(t==='crm')v.innerHTML=crmView();
  if(t==='bun'){v.innerHTML=bunView();bunRows()}
@@ -131,8 +132,8 @@ function view(){const v=$('v'),t=S.tab;
 function fill(){const t=S.tab;fillX(t);
  if(t==='orders'&&$('ol')){const c={};S.orders.forEach(o=>{const s=LEG[o.status]||o.status;c[s]=(c[s]||0)+1});const rev=S.orders.filter(o=>(LEG[o.status]||o.status)===ST[3]).reduce((a,o)=>a+(Number(o.payment&&o.payment.total)||0)-(Number(o.returnedAmount)||0),0);
   $('stt').innerHTML=`<div class="stat"><b>${S.orders.length}</b>كل الطلبات</div>`+ST.map(s=>`<div class="stat"><b>${c[s]||0}</b>${s}</div>`).join('')+`<div class="stat"><b>${money(rev)}</b>صافي المبيعات المحصّلة (بعد المرتجعات) ج.م</div>`+`<div class="stat"><b>${money(S.ret.reduce((a,r)=>a+(Number(r.amount)||0),0))}</b>قيمة المرتجعات ج.م</div>`;
-  const q=S.q.trim().toLowerCase(),d=S.sort==='id'?-1:1;let L=S.orders.filter(o=>{const x=o.customer||{};return(S.st==='all'||(LEG[o.status]||o.status)===S.st)&&(!q||[o.orderId,x.name,x.phone,x.altPhone].join(' ').toLowerCase().includes(q))});
-  L.sort((a,b)=>S.sort==='total'?(b.payment.total-a.payment.total):S.sort==='id'?String(b.orderId).localeCompare(String(a.orderId)):new Date(b.timestamp)-new Date(a.timestamp));
+  const q=S.q.trim().toLowerCase(),d=S.sort==='id'?-1:1;let L=S.orders.filter(o=>{const x=o.customer||{};return(S.st==='all'||(LEG[o.status]||o.status)===S.st)&&(!S.pay||S.pay==='all'||payState(o)===S.pay)&&(q||isArch(o)===!!S.arch)&&(!q||[o.orderId,x.name,x.phone,x.altPhone].join(' ').toLowerCase().includes(q))});
+  L.sort((a,b)=>S.sort==='old'?new Date(a.timestamp)-new Date(b.timestamp):new Date(b.timestamp)-new Date(a.timestamp));
   $('ol').innerHTML=L.map(o=>{const x=o.customer||{},p=o.payment||{},cur=LEG[o.status]||o.status,ph=String(x.phone||'').replace(/\D/g,'');return`<div class="card ${isUnread(o)?'unread':''}"><div class="sp"><b class="gold">#${esc(o.orderId)}</b>${isUnread(o)?'<span class="nbadge">جديد</span>':''}<span class="mut">${esc(new Date(o.timestamp).toLocaleString('ar-EG'))}</span>${isUnread(o)?`<button class="btn s" data-id="${esc(o.orderId)}" onclick="markSeen(this.dataset.id)">✔ تمت القراءة</button>`:''}</div><div><b>${esc(x.name)}</b> — <a href="tel:${esc(ph)}">${esc(x.phone)}</a> · <a target="_blank" rel="noopener" href="https://wa.me/2${esc(ph.replace(/^0/,''))}">واتساب</a>${x.altPhone?' / '+esc(x.altPhone):''}</div><div>${esc(x.governorate)} — ${esc(x.address)}</div><div class="mut">${(o.items||[]).map(i=>esc(i.name)+' ('+esc(i.size)+') ×'+(Number(i.quantity)||0)).join('<br>')}</div>${o.notes?`<div class="warn" style="background:#f59e0b1a;border-color:#f59e0b66;color:#fcd34d"><b>ملاحظات:</b> ${esc(o.notes)}</div>`:''}${x.giftMessage?`<div>🎁 ${esc(x.giftMessage)}</div>`:''}<div>الدفع: <b>${esc(PAY[p.method]||p.method)}</b>${p.method!=='cod'?' ('+esc(p.transactionRef)+')':''} · الإجمالي: <b class="gold">${money(p.total)} ج.م</b></div>${payLine(o)}${warn(o)}<div class="row" style="margin-top:.4rem">${ST.map((s,i)=>`<button class="btn s ${cur===s?'':'g'}" data-id="${esc(o.orderId)}" data-i="${i}" onclick="setSt(this.dataset.id,+this.dataset.i)">${s}</button>`).join('')}<button class="btn s g" data-id="${esc(o.orderId)}" onclick="printInv(this.dataset.id)">🖨 فاتورة</button><button class="btn s g" data-id="${esc(o.orderId)}" onclick="pngInv(this.dataset.id)">🖼 PNG</button><button class="btn s g" data-id="${esc(o.orderId)}" onclick="oeOpen(this.dataset.id)">✏️ تعديل الطلب</button><button class="btn s g" data-id="${esc(o.orderId)}" onclick="startRet(this.dataset.id)">↩ مرتجع</button><button class="btn s g" data-id="${esc(o.orderId)}" onclick="printWaybill(this.dataset.id)">🚚 بوليصة شحن</button><button class="btn s g" data-id="${esc(o.orderId)}" onclick="pdfInv(this.dataset.id)">📄 PDF</button><button class="btn s r" data-id="${esc(o.orderId)}" onclick="trashOrder(this.dataset.id)">🗑 حذف</button></div></div>`}).join('')||'<p class="mut">لا توجد طلبات.</p>'}
  if(t==='ret'&&$('rtl'))$('rtl').innerHTML=S.ret.slice().sort((a,b)=>b.ts-a.ts).map(r=>`<div class="card"><div class="sp"><b class="gold">#${esc(r.orderId)}</b><span class="mut">${esc(new Date(r.ts).toLocaleString('ar-EG'))}</span></div><div class="mut">${(r.items||[]).map(i=>esc(i.name)+' ('+esc(i.size)+') ×'+i.quantity).join('<br>')}</div><div>${r.action==='restock'?'رجعت للمخزون':'تالف'} · استرداد: <b class="gold">${money(r.amount)} ج.م</b>${r.reason?' · '+esc(r.reason):''}</div></div>`).join('')||'<p class="mut">لا توجد مرتجعات مسجلة.</p>';
  if(t==='prods'&&$('pl'))$('pl').innerHTML=S.prods.map(p=>`<div class="card"><div class="row"><img class="th n" src="${esc(p.image)}" alt=""><div><b>${esc(p.name)}</b> <span class="mut">${esc(p.category)}</span><br><span class="gold">${Object.entries(p.prices||{}).map(([k,v])=>k+': '+money(v)).join(' · ')}${typeof p.stock==='number'?' · مخزون: '+p.stock:''}${p.damaged?' · تالف: '+p.damaged:''}</span></div><div class="row n"><span>نفدت</span><button class="sw ${p.soldOut?'on':''}" data-id="${p.id}" data-f="soldOut" onclick="tog(this)" aria-label="نفدت الكمية"></button><span>مخفي</span><button class="sw ${p.hidden?'on':''}" data-id="${p.id}" data-f="hidden" onclick="tog(this)" aria-label="إخفاء"></button></div><div class="row n"><button class="btn s" data-id="${p.id}" onclick="S.edit=+this.dataset.id;view();scrollTo(0,0)">تعديل</button><button class="btn s r" data-id="${p.id}" onclick="delProd(+this.dataset.id)">حذف</button></div></div></div>`).join('')||'<p class="mut">لا توجد عطور بعد. لو أول مرة، افتح <a href="index.html#admin">index.html#admin</a> واضغط "رفع الكتالوج للسحابة" مرة واحدة.</p>';
@@ -140,7 +141,7 @@ function fill(){const t=S.tab;fillX(t);
  if(t==='rev')revFill()}
 function warn(o){try{const p=o.payment||{};let sum=0;const bad=[];(o.items||[]).forEach(i=>{const q=Number(i.quantity)||0,pr=Number(i.price)||0;sum+=q*pr;const c=S.prods.find(x=>String(x.id)===String(i.id)),cp=c&&c.prices&&c.prices[i.size];if(c&&cp!=null&&Number(cp)!==pr)bad.push(esc(i.name)+' ('+esc(i.size)+')')});const diff=Number(p.total)-(sum-(Number(p.discount)||0)+(Number(p.shippingCost)||0)+(Number(p.fee)||0)+(Number(p.giftCost)||0)),m=[];if(Math.abs(diff)>0.011&&Math.abs(diff-50)>0.011)m.push('الإجمالي لا يطابق البنود (فرق '+money(diff)+' ج.م)');if(bad.length)m.push('سعر مختلف عن الكتالوج الحالي: '+bad.join('، '));return m.length?'<div class="warn">⚠ راجع الطلب قبل التجهيز: '+m.join(' — ')+'</div>':''}catch(e){return''}}
 function syncSheet(id,st){const u=S.gen.sheetsUrl,k=localStorage.getItem('sh_key');if(u&&k)fetch(u,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'status',orderId:id,status:st,key:k})}).catch(()=>{})}
-async function setSt(id,i){try{const o=S.orders.find(x=>x.orderId===id),upd={status:ST[i]};
+async function setSt(id,i){try{const o=S.orders.find(x=>x.orderId===id),upd={status:ST[i],statusAt:Date.now()};
  if(o&&(i===2||i===3)&&!o.stockDeducted){const need={};(o.items||[]).forEach(it=>{(it.bundleItems||[{id:it.id,quantity:1}]).forEach(b=>{need[b.id]=(need[b.id]||0)+(Number(b.quantity)||1)*(Number(it.quantity)||0)})});const b=db.batch();let n=0;Object.keys(need).forEach(pid=>{const p=S.prods.find(x=>String(x.id)===String(pid));if(p&&typeof p.stock==='number'){const ns=Math.max(0,p.stock-need[pid]);b.update(db.collection('perfumes').doc(String(p.id)),{stock:ns,soldOut:ns===0?true:!!p.soldOut});n++}});if(n)await b.commit();upd.stockDeducted=true}
  if(o&&i===5&&o.stockDeducted){const need2={};(o.items||[]).forEach(it=>{(it.bundleItems||[{id:it.id,quantity:1}]).forEach(b=>{need2[b.id]=(need2[b.id]||0)+(Number(b.quantity)||1)*(Number(it.quantity)||0)})});const b2=db.batch();let n2=0;Object.keys(need2).forEach(pid=>{const p=S.prods.find(x=>String(x.id)===String(pid));if(p&&typeof p.stock==='number'){b2.update(db.collection('perfumes').doc(String(p.id)),{stock:FV().increment(need2[pid]),soldOut:false});n2++}});if(n2)await b2.commit();upd.stockDeducted=false}
  await db.collection('orders').doc(id).update(upd);toast('تم تحديث الحالة — بيظهر للعميل لحظيًا');syncSheet(id,ST[i])}catch(e){toast('تعذّر التحديث: '+e.code)}}
@@ -151,7 +152,7 @@ async function saveRet(){const o=S.orders.find(x=>x.orderId===S.rf);if(!o)return
  const act=$('rt-act').value,amt=Math.max(0,Number($('rt-amt').value)||0),qty=items.reduce((a,x)=>a+x.quantity,0),tot=(o.items||[]).reduce((a,x)=>a+(Number(x.quantity)||0),0),full=(Number(o.returnedQty)||0)+qty>=tot,rid='RT-'+Date.now();
  try{const b=db.batch();b.set(db.collection('returns').doc(rid),{id:rid,orderId:o.orderId,items,action:act,reason:$('rt-why').value.trim().slice(0,300),amount:amt,ts:Date.now()});
  items.forEach(it=>{const p=S.prods.find(x=>String(x.id)===String(it.id));if(!p)return;const ref=db.collection('perfumes').doc(String(p.id));if(act==='restock'&&o.stockDeducted&&typeof p.stock==='number')b.update(ref,{stock:FV().increment(it.quantity),soldOut:false});else if(act==='damaged')b.update(ref,{damaged:FV().increment(it.quantity)})});
- const u={returnedAmount:FV().increment(amt),returnedQty:FV().increment(qty)};if(full)u.status=ST[4];b.update(db.collection('orders').doc(o.orderId),u);await b.commit();if(full)syncSheet(o.orderId,ST[4]);toast('تم تسجيل المرتجع وتحديث المبيعات');S.rf='';view()}catch(e){toast('تعذّر التسجيل: '+e.code)}}
+ const u={returnedAmount:FV().increment(amt),returnedQty:FV().increment(qty)};if(full){u.status=ST[4];u.statusAt=Date.now()}b.update(db.collection('orders').doc(o.orderId),u);await b.commit();if(full)syncSheet(o.orderId,ST[4]);toast('تم تسجيل المرتجع وتحديث المبيعات');S.rf='';view()}catch(e){toast('تعذّر التسجيل: '+e.code)}}
 function shRows(){$('shl').innerHTML=S.shipEdit.map((g,i)=>`<div class="row"><input class="field" placeholder="اسم المحافظة" value="${esc(g.name)}" oninput="S.dirty=true;S.shipEdit[${i}].name=this.value"><input class="field n" style="max-width:110px" type="number" min="0" value="${esc(g.rate)}" oninput="S.dirty=true;S.shipEdit[${i}].rate=+this.value"><button class="btn s r n" onclick="S.dirty=true;S.shipEdit.splice(${i},1);shRows()">حذف</button></div>`).join('')}
 async function saveShip(){const l=S.shipEdit.map(g=>({id:String(g.id),name:String(g.name||'').trim(),rate:Number(g.rate)}));if(!l.length)return toast('لازم محافظة واحدة على الأقل');if(l.some(g=>!g.name||!(g.rate>=0)))return toast('راجع الأسماء والأسعار');try{await db.doc('settings/shipping').set({list:l});S.dirty=false;S.shipEdit=null;toast('تم حفظ الشحن — بيتحدث فورًا في المتجر')}catch(e){toast('تعذّر الحفظ: '+e.code)}}
 function ctRows(){$('ctl').innerHTML=S.catEdit.map((c,i)=>`<div class="row"><input class="field" placeholder="المفتاح (men)" value="${esc(c.key)}" ${c.old?'readonly':''} oninput="S.dirty=true;S.catEdit[${i}].key=this.value.trim().toLowerCase()"><input class="field" placeholder="اسم القسم" value="${esc(c.name)}" oninput="S.dirty=true;S.catEdit[${i}].name=this.value"><button class="btn s r n" onclick="S.dirty=true;S.catEdit.splice(${i},1);ctRows()">حذف</button></div>`).join('')}
@@ -353,11 +354,11 @@ function maybeSeed(){if(S._revLoaded&&S._genLoaded&&!S.gen.reviewsSeeded&&!S.rev
 function alertRev(r){toast('⭐ تعليق جديد من '+r.name);document.title='⭐ تعليق جديد!';setTimeout(()=>document.title='لوحة تحكم شَادِن',6000);bell();$('npop-body').innerHTML=`<div class="sp"><b>${esc(r.name)}</b><span class="gold">${'★'.repeat(r.stars||0)}</span></div><div>${esc(r.text)}</div><div class="mut">هيظهر في المتجر لما تقرر تظهره.</div>`;$('npop').dataset.id='';$('npop').dataset.kind='rev';$('npop').classList.add('on')}
 
 /* ---- policies & settings (shipping rule, gift price, contacts, beneficiary) ---- */
-var polView=function(){const p=polMerged();return `<div class="card"><b class="gold">الشحن المجاني والحدود</b><label class="row"><input type="checkbox" id="po-rl" ${p.requireLogin===false?'':'checked'} style="flex:none"> إلزام العميل بتسجيل الدخول قبل تأكيد الطلب (عشان يتابع حالة طلبه في «طلباتي»)</label><label class="row"><input type="checkbox" id="po-fse" ${p.freeShipEnabled===false?'':'checked'} style="flex:none"> تفعيل الشحن المجاني عند مبلغ معين</label><div class="row"><label class="mut">حد الشحن المجاني (ج.م)<input class="field" id="po-fs" type="number" min="0" value="${esc(p.freeShipMin||1200)}"></label><label class="mut">الحد الأدنى لقيمة الطلب (0 = بدون)<input class="field" id="po-mo" type="number" min="0" value="${esc(p.minOrder||0)}"></label><label class="mut">سعر تغليف الهدية (ج.م)<input class="field" id="po-gp" type="number" min="0" value="${esc(p.giftPrice!==undefined?p.giftPrice:50)}"></label></div></div>
+var polView=function(){const p=polMerged();return `<div class="card"><b class="gold">الشحن المجاني والحدود</b><label class="row"><input type="checkbox" id="po-rl" ${p.requireLogin===false?'':'checked'} style="flex:none"> إلزام العميل بتسجيل الدخول قبل تأكيد الطلب (عشان يتابع حالة طلبه في «طلباتي»)</label><label class="row"><input type="checkbox" id="po-fse" ${p.freeShipEnabled===false?'':'checked'} style="flex:none"> تفعيل الشحن المجاني عند مبلغ معين</label><div class="row"><label class="mut">حد الشحن المجاني (ج.م) — 0 = إخفاء الشحن المجاني من المتجر<input class="field" id="po-fs" type="number" min="0" value="${esc(p.freeShipMin!==undefined&&p.freeShipMin!==''?p.freeShipMin:1200)}"></label><label class="mut">سعر تغليف الهدية (ج.م) — 0 = إخفاء الهدية من المتجر<input class="field" id="po-gp" type="number" min="0" value="${esc(p.giftPrice!==undefined?p.giftPrice:50)}"></label></div></div>
  <div class="card"><b class="gold">بيانات التحويل (بتظهر في الشيك أوت والفواتير)</b><div class="row"><input class="field" id="po-vn" placeholder="رقم فودافون كاش" value="${esc(p.vodafoneNumber)}"><input class="field" id="po-vt" placeholder="اسم المستفيد (فودافون كاش)" value="${esc(p.vodafoneTitle)}"></div><div class="row"><input class="field" id="po-ip" placeholder="رقم / عنوان إنستاباي" value="${esc(p.instapayPhone)}"><input class="field" id="po-it" placeholder="اسم المستفيد (إنستاباي)" value="${esc(p.instapayTitle)}"></div></div>
  <div class="card"><b class="gold">قنوات التواصل</b><div class="row"><input class="field" id="po-ph" placeholder="رقم الاتصال" value="${esc(p.phone)}"><input class="field" id="po-wa" placeholder="رقم الواتساب" value="${esc(p.whatsapp)}"></div><input class="field" id="po-lt" placeholder="رابط Linktree (https://...)" value="${esc(p.linktree)}"><input class="field" id="po-fb" placeholder="رابط فيسبوك (https://...)" value="${esc(p.facebook)}"><input class="field" id="po-ig" placeholder="رابط إنستجرام (https://...)" value="${esc(p.instagram)}"><input class="field" id="po-tt" placeholder="رابط تيك توك (https://...)" value="${esc(p.tiktok)}"></div>
  <div class="card"><b class="gold">السياسات</b><label class="mut">سياسة الاستبدال والاسترجاع</label><textarea id="po-ret" rows="5" oninput="S.dirty=true">${esc(p.returnPolicy)}</textarea><label class="mut">شروط الاستخدام</label><textarea id="po-terms" rows="5" oninput="S.dirty=true">${esc(p.terms)}</textarea><label class="mut">نقاط السياسات في الفوتر (سطر لكل نقطة — لو فاضي بتظهر الافتراضية)</label><textarea id="po-foot" rows="4" oninput="S.dirty=true">${esc(p.footerPoints)}</textarea></div><button class="btn" onclick="savePol()">حفظ</button>`}
-async function savePol(){const g=i=>$(i).value.trim(),lt=g('po-lt');if(lt&&!/^https:\/\//.test(lt))return toast('رابط Linktree لازم يبدأ بـ https://');for(const k of ['po-fb','po-ig','po-tt']){const v=g(k);if(v&&!/^https?:\/\//.test(v))return toast('روابط السوشيال لازم تبدأ بـ https://')}try{await db.doc('settings/policies').set({freeShipEnabled:$('po-fse').checked,requireLogin:$('po-rl').checked,freeShipMin:Number(g('po-fs'))||0,minOrder:Math.max(0,Number(g('po-mo'))||0),giftPrice:Math.max(0,Number(g('po-gp')||0)),vodafoneNumber:g('po-vn'),vodafoneTitle:g('po-vt'),instapayPhone:g('po-ip'),instapayTitle:g('po-it'),phone:g('po-ph'),whatsapp:g('po-wa'),linktree:lt,facebook:g('po-fb'),instagram:g('po-ig'),tiktok:g('po-tt'),returnPolicy:g('po-ret'),terms:g('po-terms'),footerPoints:g('po-foot')});S.dirty=false;toast('تم الحفظ — بيتحدّث في المتجر والفواتير فورًا')}catch(e){toast('تعذّر الحفظ: '+e.code)}}
+async function savePol(){const g=i=>$(i).value.trim(),lt=g('po-lt');if(lt&&!/^https:\/\//.test(lt))return toast('رابط Linktree لازم يبدأ بـ https://');for(const k of ['po-fb','po-ig','po-tt']){const v=g(k);if(v&&!/^https?:\/\//.test(v))return toast('روابط السوشيال لازم تبدأ بـ https://')}try{await db.doc('settings/policies').set({freeShipEnabled:$('po-fse').checked,requireLogin:$('po-rl').checked,freeShipMin:Number(g('po-fs'))||0,minOrder:0,giftPrice:Math.max(0,Number(g('po-gp')||0)),vodafoneNumber:g('po-vn'),vodafoneTitle:g('po-vt'),instapayPhone:g('po-ip'),instapayTitle:g('po-it'),phone:g('po-ph'),whatsapp:g('po-wa'),linktree:lt,facebook:g('po-fb'),instagram:g('po-ig'),tiktok:g('po-tt'),returnPolicy:g('po-ret'),terms:g('po-terms'),footerPoints:g('po-foot')});S.dirty=false;toast('تم الحفظ — بيتحدّث في المتجر والفواتير فورًا')}catch(e){toast('تعذّر الحفظ: '+e.code)}}
 
 
 /* ===================== V8: dropdowns, alerts, date filter, bundle upload, diagnostics ===================== */
@@ -588,5 +589,267 @@ async function accDelete(uid){const u=(S.users||[]).find(x=>x.uid===uid)||{};
  if(os.length||rs.length)wipeAll=await cfm('الحساب ده عنده '+os.length+' طلب و'+rs.length+' تقييم.\nتحب نمسحهم كمان؟ (إلغاء = الطلبات والتقييمات تفضل محفوظة)',{title:'بيانات الحساب',ok:'امسحهم كمان'});
  try{const b=db.batch();b.delete(db.collection('users').doc(uid));b.set(db.collection('blocked').doc(uid),{reason:'deleted',name:u.name||'',ts:Date.now()});if(wipeAll){os.forEach(o=>b.delete(db.collection('orders').doc(String(o.orderId))));rs.forEach(r=>b.delete(db.collection('reviews').doc(r._id)))}await b.commit();toast('تم حذف الحساب')}catch(e){toast('تعذّر: '+e.code)}}
 const _start2=start;start=function(){_start2();sub(db.collection('blocked'),s=>{S.blk={};s.docs.forEach(d=>S.blk[d.id]=d.data());if(S.tab==='crm')crmFill()})};
+</script>
+<script id="admin-v11">
+/* ===================== admin v11: media, CRM, archive, emails ===================== */
+const SITE = (() => { try { return new URL('./', location.href).href; } catch (e) { return ''; } })();
+const D7 = 7 * 864e5;
+const SU = () => (S.gen && S.gen.sheetsUrl) || '';
+const SKEY = () => localStorage.getItem('sh_key') || '';
+async function scriptApi(p) {
+  const u = SU(); if (!u) return { ok: false, err: 'no_url' };
+  if (p.key === undefined) p.key = SKEY();
+  try { const r = await fetch(u, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(p) }); return await r.json(); }
+  catch (e) { return { ok: false, err: 'network' }; }
+}
+const SCERR = { no_url: 'ادخل رابط Web App في «الإعلان والإعدادات» الأول', unauthorized: 'مفتاح الأدمن غير صحيح', network: 'تعذّر الوصول للسكربت', server: 'خطأ في السكربت — راجع Executions' };
+
+/* ---------- archive helpers (7 days after received / returned / cancelled) ---------- */
+function isArch(o) {
+  const st = stN(o); if (st !== ST[3] && st !== ST[4] && st !== ST[5]) return false;
+  const t = Number(o.statusAt) || Number(o.editedAt) || Date.parse(o.timestamp) || 0;
+  return t > 0 && Date.now() - t >= D7;
+}
+S.arch = false; S.pay = 'all';
+function archN() { return (S.orders || []).filter(isArch).length; }
+function archBar() {
+  return `<div class="row" style="margin:.4rem 0"><button class="btn s ${S.arch ? 'g' : ''}" onclick="S.arch=false;view()">الطلبات الحالية (${(S.orders || []).length - archN()})</button><button class="btn s ${S.arch ? '' : 'g'}" onclick="S.arch=true;view()">🗄 الطلبات المؤرشفة (${archN()})</button></div>${S.arch ? '<p class="mut" style="font-size:.85rem">الطلبات المستلمة / المرتجعة / الملغية بتتأرشف تلقائيًا بعد 7 أيام (وتظهر للعميل في «الطلبات السابقة»). البحث بيشمل الأرشيف.</p>' : ''}`;
+}
+function payState(o) {
+  const p = o.payment || {}, st = stN(o);
+  if (st === ST[5]) return 'cancel';
+  const net = Math.max(0, (Number(p.total) || 0) - (Number(o.returnedAmount) || 0)), paid = Number(p.paid) || 0;
+  if (st === ST[3]) return 'paid';
+  if (net > 0 && paid >= net) return 'paid';
+  return paid > 0 ? 'partial' : 'unpaid';
+}
+
+/* ---------- e-mail of an order's customer ---------- */
+function mailOf(o) {
+  if (o.contactEmail && /@/.test(o.contactEmail) && !/@shaden\.com$/i.test(o.contactEmail)) return o.contactEmail;
+  const u = (S.users || []).find(x => x.uid === o.userId);
+  if (u) { if (u.recoveryEmail && !/@shaden\.com$/i.test(u.recoveryEmail)) return u.recoveryEmail; if (u.email && !/@shaden\.com$/i.test(u.email)) return u.email; }
+  return '';
+}
+function rowOf(o) {
+  const c = o.customer || {}, p = o.payment || {};
+  return { orderId: o.orderId, time: o.timestamp, name: c.name, phone: c.phone, altPhone: c.altPhone, governorate: c.governorate, address: c.address, items: (o.items || []).map(i => i.name + ' [' + i.size + '] ×' + i.quantity).join(' | '), subtotal: p.subtotal, shipping: p.shippingCost, discount: p.discount, fee: p.fee, gift: p.giftCost, total: p.total, payMethod: p.method, txRef: p.transactionRef, notes: o.notes || '', status: o.status, email: mailOf(o) };
+}
+syncSheet = function (id, st) {
+  const u = SU(), k = SKEY(); if (!u || !k) return;
+  const o = S.orders.find(x => x.orderId === id) || (S.allOrders || []).find(x => x.orderId === id); if (!o) return;
+  const em = mailOf(o);
+  scriptApi({ action: 'status', orderId: id, status: st, email: em, name: (o.customer || {}).name, total: (o.payment || {}).total, site: SITE, row: rowOf(o) }).then(r => {
+    if (!r || !r.ok) return toast('⚠ تحديث الشيت/الإيميل: ' + (SCERR[r && r.err] || 'فشل'));
+    toast(r.mail ? '✉ اتبعت إيميل بالحالة للعميل' : (em ? (r.mailErr ? '⚠ تعذّر إرسال الإيميل' : 'تم تحديث الشيت') : 'تم تحديث الشيت (العميل ملوش إيميل حقيقي)'));
+  });
+};
+async function testScript() {
+  const u = $('an-sheet') ? $('an-sheet').value.trim() : SU();
+  if (!u) return toast('ادخل الرابط الأول');
+  const k = $('an-key') ? $('an-key').value.trim() : SKEY();
+  const bak = S.gen.sheetsUrl; S.gen.sheetsUrl = u;
+  const r = await scriptApi({ action: 'ping', key: k }); S.gen.sheetsUrl = bak;
+  if (!r || !r.ok) return toast('❌ ' + (SCERR[r && r.err] || 'فشل الاتصال'));
+  toast((r.sa ? '✅ السكربت شغال والربط مع Firebase سليم' : '⚠ السكربت شغال لكن SA_KEY غير صحيح: ' + (r.saErr || '')) + ' • حصة الإيميل المتبقية اليوم: ' + r.mailQuota);
+}
+
+/* ---------- image processing: cover-crop to exact size, keep transparency (WebP) ---------- */
+function procImg(f, W, H, maxLen) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onerror = () => rej(new Error('read'));
+    r.onload = () => {
+      const im = new Image();
+      im.onerror = () => rej(new Error('bad'));
+      im.onload = () => {
+        const sc = Math.max(W / im.width, H / im.height), sw = W / sc, sh = H / sc, sx = (im.width - sw) / 2, sy = (im.height - sh) / 2;
+        const c = document.createElement('canvas'); c.width = W; c.height = H;
+        const x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(im, sx, sy, sw, sh, 0, 0, W, H);
+        let q = .84, d = c.toDataURL('image/webp', q);
+        if (d.indexOf('data:image/webp') === 0) { while (d.length > maxLen && q > .4) { q -= .07; d = c.toDataURL('image/webp', q); } }
+        else { d = c.toDataURL('image/png'); if (d.length > maxLen) { const c2 = document.createElement('canvas'); c2.width = W; c2.height = H; const y = c2.getContext('2d'); y.fillStyle = '#fff'; y.fillRect(0, 0, W, H); y.drawImage(c, 0, 0); q = .85; d = c2.toDataURL('image/jpeg', q); while (d.length > maxLen && q > .4) { q -= .07; d = c2.toDataURL('image/jpeg', q); } } }
+        if (d.length > 900000) return rej(new Error('big'));
+        res(d);
+      };
+      im.src = r.result;
+    };
+    r.readAsDataURL(f);
+  });
+}
+
+/* ---------- media tab: banners + gallery ---------- */
+S.bnr = []; S.gal = [];
+const BW = 1100, BH = 407, GW = 800, MAXB = 10, MAXG = 24;
+const byOrder = (a, b) => (Number(a.order) || 0) - (Number(b.order) || 0) || (a.ts || 0) - (b.ts || 0);
+function mediaView() {
+  return `<div class="card"><b class="gold">🖼 البنرات الرئيسية (بتلف 3D كل ثانيتين)</b>
+<p class="mut" style="font-size:.88rem;line-height:1.9">المقاس المطلوب: <b class="gold">${BW} × ${BH} بكسل</b> (نسبة 2.7:1). لو رفعت مقاس مختلف بيتقص من المنتصف تلقائيًا ليتناسب مع البنر. بيدعم أغلب الصيغ (JPG / PNG / WebP / GIF) والخلفية الشفافة بتتحفظ، والصور بتتضغط تلقائيًا عشان الموقع يفضل خفيف. حد أقصى ${MAXB} بنرات.</p>
+<div class="row"><label class="btn s n" style="cursor:pointer">📤 رفع بنر (أو أكتر)<input type="file" accept="image/*" multiple style="display:none" onchange="bnUp(this)"></label></div><div id="mbn"></div></div>
+<div class="card"><b class="gold">📸 معرض الصور (بين أقسام المنتجات)</b>
+<p class="mut" style="font-size:.88rem;line-height:1.9">المقاس المطلوب: <b class="gold">${GW} × ${GW} بكسل</b> (مربع 1:1). أي صورة بمقاس تاني بتتقص من المنتصف. اكتب جملة / هوك مميز تحت كل صورة. حد أقصى ${MAXG} صورة عشان الموقع يفضل خفيف.</p>
+<div class="row"><input class="field" id="gl-cap" maxlength="90" placeholder="الهوك / العبارة اللي هتظهر على الصورة (اختياري)"><label class="btn s n" style="cursor:pointer">📤 رفع صورة (أو أكتر)<input type="file" accept="image/*" multiple style="display:none" onchange="glUp(this)"></label></div><div id="mgl"></div></div>`;
+}
+function mediaFill() {
+  const b = $('mbn'), g = $('mgl'); if (!b || !g) return;
+  const bl = S.bnr.slice().sort(byOrder), legacy = bnSlides();
+  b.innerHTML = (bl.map((x, i) => `<div class="row" style="margin:.5rem 0;padding:.4rem;border:1px solid var(--ln);border-radius:12px;${x.hidden ? 'opacity:.5' : ''}"><img src="${esc(x.url)}" alt="" style="width:190px;aspect-ratio:${BW}/${BH};object-fit:cover;border-radius:10px;flex:none"><span class="mut n">بنر ${i + 1}${x.hidden ? ' • مخفي' : ''}</span><div class="row n"><button class="btn s g" ${i ? '' : 'disabled'} data-id="${esc(x._id)}" onclick="mvMedia('banners',this.dataset.id,-1)">▲</button><button class="btn s g" ${i < bl.length - 1 ? '' : 'disabled'} data-id="${esc(x._id)}" onclick="mvMedia('banners',this.dataset.id,1)">▼</button><button class="btn s ${x.hidden ? '' : 'g'}" data-id="${esc(x._id)}" onclick="hideMedia('banners',this.dataset.id)">${x.hidden ? '👁 إظهار' : '🙈 إخفاء'}</button><button class="btn s r" data-id="${esc(x._id)}" onclick="delMedia('banners',this.dataset.id)">🗑 حذف</button></div></div>`).join('') || '<p class="mut">مفيش بنرات مضافة — بيظهر البنر الافتراضي.</p>')
+    + (legacy.length && !bl.length ? `<div class="warn" style="background:#f59e0b1a;border-color:#f59e0b66;color:#fcd34d">فيه ${legacy.length} بنر قديم من النظام السابق. <button class="btn s" onclick="bnMigrate()">نقلهم للنظام الجديد</button></div>` : '');
+  if (!g.contains(document.activeElement) || document.activeElement.tagName !== 'INPUT') {
+    const gl = S.gal.slice().sort(byOrder);
+    g.innerHTML = gl.map((x, i) => `<div class="row" style="margin:.5rem 0;padding:.4rem;border:1px solid var(--ln);border-radius:12px;${x.hidden ? 'opacity:.5' : ''}"><img src="${esc(x.url)}" alt="" style="width:96px;height:96px;object-fit:cover;border-radius:12px;flex:none"><input class="field" maxlength="90" value="${esc(x.caption || '')}" placeholder="الهوك / العبارة" data-id="${esc(x._id)}" onchange="capMedia(this.dataset.id,this.value)"><div class="row n"><button class="btn s g" ${i ? '' : 'disabled'} data-id="${esc(x._id)}" onclick="mvMedia('gallery',this.dataset.id,-1)">▲</button><button class="btn s g" ${i < gl.length - 1 ? '' : 'disabled'} data-id="${esc(x._id)}" onclick="mvMedia('gallery',this.dataset.id,1)">▼</button><button class="btn s ${x.hidden ? '' : 'g'}" data-id="${esc(x._id)}" onclick="hideMedia('gallery',this.dataset.id)">${x.hidden ? '👁 إظهار' : '🙈 إخفاء'}</button><button class="btn s r" data-id="${esc(x._id)}" onclick="delMedia('gallery',this.dataset.id)">🗑 حذف</button></div></div>`).join('') || '<p class="mut">المعرض فاضي — مش هيظهر في المتجر لحد ما تضيف صور.</p>';
+  }
+}
+async function upMedia(inp, col, W, H, maxLen, list, max, extra) {
+  const files = [...(inp.files || [])]; inp.value = ''; if (!files.length) return;
+  if (list.length + files.length > max) return toast('الحد الأقصى ' + max + ' — احذف بعض الصور أو قلّل العدد');
+  let n = 0, top = list.reduce((a, x) => Math.max(a, Number(x.order) || 0), 0);
+  for (const f of files) {
+    if (!/^image\//.test(f.type)) { toast('تخطّيت ملف مش صورة: ' + f.name); continue; }
+    try { const url = await procImg(f, W, H, maxLen); await db.collection(col).add(Object.assign({ url, order: ++top, hidden: false, ts: Date.now() }, extra || {})); n++; }
+    catch (e) { toast('تعذّر رفع ' + f.name + (e.message === 'big' ? ' (الصورة كبيرة بعد الضغط)' : '')); }
+  }
+  if (n) toast('تم رفع ' + n + ' صورة — ظاهرة للعملاء فورًا');
+}
+function bnUp(inp) { return upMedia(inp, 'banners', BW, BH, 230000, S.bnr, MAXB); }
+function glUp(inp) { const cap = ($('gl-cap').value || '').trim().slice(0, 90); return upMedia(inp, 'gallery', GW, GW, 170000, S.gal, MAXG, { caption: cap }).then(() => { $('gl-cap').value = ''; }); }
+async function mvMedia(col, id, d) {
+  const L = (col === 'banners' ? S.bnr : S.gal).slice().sort(byOrder), i = L.findIndex(x => x._id === id), j = i + d; if (i < 0 || j < 0 || j >= L.length) return;
+  const b = db.batch(); L.forEach((x, k) => { const pos = k === i ? j : k === j ? i : k; if ((Number(x.order) || 0) !== pos + 1) b.update(db.collection(col).doc(x._id), { order: pos + 1 }); });
+  try { await b.commit(); } catch (e) { toast('تعذّر: ' + e.code); }
+}
+async function hideMedia(col, id) { const x = (col === 'banners' ? S.bnr : S.gal).find(z => z._id === id); if (x) try { await db.collection(col).doc(id).update({ hidden: !x.hidden }); } catch (e) { toast('تعذّر: ' + e.code); } }
+async function delMedia(col, id) { if (!(await cfm('حذف الصورة نهائيًا؟'))) return; try { await db.collection(col).doc(id).delete(); toast('تم الحذف'); } catch (e) { toast('تعذّر: ' + e.code); } }
+async function capMedia(id, v) { try { await db.collection('gallery').doc(id).update({ caption: String(v || '').trim().slice(0, 90) }); toast('تم حفظ العبارة'); } catch (e) { toast('تعذّر: ' + e.code); } }
+async function bnMigrate() {
+  const l = bnSlides(); if (!l.length) return;
+  try { const b = db.batch(); l.forEach((u, i) => b.set(db.collection('banners').doc(), { url: u, order: i + 1, hidden: false, ts: Date.now() })); b.delete(db.doc('settings/banner')); await b.commit(); toast('تم النقل'); } catch (e) { toast('تعذّر: ' + e.code); }
+}
+TABS.splice(3, 0, ['media', 'الوسائط (بنرات ومعرض)']);
+const _viewV11 = view;
+view = function () {
+  if (S.tab === 'media') { $('v').innerHTML = mediaView(); mediaFill(); return; }
+  return _viewV11.apply(this, arguments);
+};
+const _fillXV11 = fillX;
+fillX = function (t) { if (t === 'media') return mediaFill(); return _fillXV11.apply(this, arguments); };
+
+/* ---------- CRM: registered customers ---------- */
+S.crmQ = S.crmQ || '';
+const cid = u => 'CU-' + String(u.uid || '').slice(0, 6).toUpperCase();
+const provOf = u => (u.provider === 'google' || (u.provider === undefined && u.email && !/@shaden\.com$/i.test(u.email))) ? 'google' : 'email';
+const GIC = '<svg viewBox="0 0 24 24" width="20" height="20" aria-label="Google"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>';
+const EIC = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#B4C1F5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Email"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>';
+const TELIC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>';
+const WAIC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.4.6c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.1 1 2.1 1.300 2.4 1.5.3.1.5.1.6-.1l.8-1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.2.1.8-.1 1.4z"/></svg>';
+const ibtn = 'display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid var(--ln);';
+const phoneIcons = ph => ph ? `<a href="tel:${esc(String(ph).replace(/[^\d+]/g, ''))}" title="اتصال" style="${ibtn}color:#6ee7b7">${TELIC}</a><a target="_blank" rel="noopener" href="${esc(waLink(ph))}" title="واتساب" style="${ibtn}color:#25D366">${WAIC}</a>` : '';
+function usersOrders(u) {
+  const k = nph(u.phone);
+  return (S.allOrders || []).filter(o => !o.deleted && (o.userId === u.uid || (k && k.length >= 9 && nph((o.customer || {}).phone) === k && !o.userId)));
+}
+function isNewUser(u) { const cut = Number(S.gen && S.gen.crmCut); return u.adminSeen !== true && cut > 0 && Number(u.ts) >= cut; }
+function newUsersN() { return (S.users || []).filter(isNewUser).length; }
+function userInfo(u) {
+  const os = usersOrders(u).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)), last = os[0], lc = last && last.customer || {};
+  return { os, phone: u.phone || lc.phone || '', addr: [u.gov || lc.governorate, u.address || lc.address].filter(Boolean).join(' — '), spent: os.filter(o => stN(o) === ST[3]).reduce((a, o) => a + netOf(o), 0) };
+}
+const _crmOld = crmView;
+crmView = function () {
+  return `<div class="row"><input class="field" placeholder="بحث: الاسم أو رقم الهاتف أو Customer ID أو الإيميل" value="${esc(S.crmQ)}" oninput="S.crmQ=this.value;crmFill()"><button class="btn s n" onclick="markAllUsersSeen()">✔ تمت قراءة كل العملاء الجدد</button></div><div id="acc2"></div>
+<details style="margin-top:.8rem"><summary class="gold" style="cursor:pointer">📒 دليل العملاء من الطلبات (بدون حساب)</summary>${_crmOld()}</details>`;
+};
+crmFill = function () {
+  const b = $('acc2'); if (!b) return;
+  const q = (S.crmQ || '').trim().toLowerCase(), qd = q.replace(/\D/g, '');
+  const L = (S.users || []).filter(u => { if (!q) return true; const inf = userInfo(u); return [u.name, u.email, u.recoveryEmail, cid(u), u.uid].join(' ').toLowerCase().includes(q) || (qd.length >= 4 && nph(inf.phone).includes(nph(qd))); })
+    .sort((a, b) => (isNewUser(b) - isNewUser(a)) || (Number(b.ts) || 0) - (Number(a.ts) || 0));
+  b.innerHTML = `<div class="card"><b class="gold">👥 العملاء المسجّلين (${L.length})</b>${newUsersN() ? ` <span class="nbadge">${newUsersN()} جديد</span>` : ''}</div>` + (L.map(u => {
+    const inf = userInfo(u), nw = isNewUser(u), bl = S.blk && S.blk[u.uid];
+    return `<div class="card ${nw ? 'unread' : ''}"><div class="sp"><div class="row n" style="gap:.5rem">${provOf(u) === 'google' ? GIC : EIC}<b style="font-size:1.05rem">${esc(u.name || 'بدون اسم')}</b>${nw ? '<span class="nbadge">جديد</span>' : ''}${bl ? '<span class="nbadge" style="background:#f43f5e;color:#fff">معطّل</span>' : ''}</div><span class="mut" style="font-family:monospace">${esc(cid(u))}</span></div>
+<div class="row" style="margin:.3rem 0"><div class="n" style="display:flex;align-items:center;gap:.4rem;flex:1 1 200px"><span dir="ltr">${esc(inf.phone || '—')}</span>${phoneIcons(inf.phone)}</div><div class="mut" style="flex:2 1 220px">📍 ${esc(inf.addr || 'لا يوجد عنوان')}</div></div>
+<div class="mut" style="font-size:.85rem">تاريخ التسجيل: ${u.ts ? esc(new Date(Number(u.ts)).toLocaleString('ar-EG')) : '—'} · الطلبات: <b>${inf.os.length}</b> · المشتريات المحصّلة: <b class="gold">${money(inf.spent)} ج.م</b></div>
+<div class="row n" style="margin-top:.5rem"><button class="btn s" data-u="${esc(u.uid)}" onclick="cdOpen(this.dataset.u)">📄 التفاصيل والفواتير</button>${nw ? `<button class="btn s g" data-u="${esc(u.uid)}" onclick="userSeen(this.dataset.u)">✔ تمت القراءة</button>` : ''}<button class="btn s g" data-u="${esc(u.uid)}" onclick="accToggle(this.dataset.u)">${bl ? '✔ تفعيل' : '⏸ تعطيل'}</button><button class="btn s r" data-u="${esc(u.uid)}" onclick="accDelete2(this.dataset.u)">🗑 حذف الحساب نهائيًا</button></div></div>`;
+  }).join('') || '<p class="mut">لا توجد حسابات مطابقة.</p>');
+};
+accFill = function () {};
+async function userSeen(uid) { try { await db.collection('users').doc(uid).update({ adminSeen: true }); } catch (e) { toast('تعذّر: ' + e.code); } }
+async function markAllUsersSeen() {
+  const L = (S.users || []).filter(isNewUser); if (!L.length) return toast('مفيش عملاء جدد');
+  try { for (let i = 0; i < L.length; i += 400) { const b = db.batch(); L.slice(i, i + 400).forEach(u => b.update(db.collection('users').doc(u.uid), { adminSeen: true })); await b.commit(); } toast('تمت قراءة ' + L.length + ' عميل'); } catch (e) { toast('تعذّر: ' + e.code); }
+}
+let _usersFirst = true;
+function usersChanged(s) {
+  if (!S._genLoaded) { S._pendU = true; return; }
+  if (!_usersFirst) s.docChanges().forEach(c => { if (c.type === 'added') { const u = c.doc.data(); if (u.adminSeen !== true && Number(u.ts) >= Number(S.gen.crmCut || 0)) { try { bell(); } catch (e) {} toast('👤 عميل جديد سجّل: ' + (u.name || '')); } } });
+  _usersFirst = false; nav();
+}
+const _navV11 = nav;
+nav = function () {
+  _navV11();
+  const n = newUsersN(); if (!n) return;
+  [...document.querySelectorAll('#nav button')].forEach(b => { if ((b.getAttribute('onclick') || '').indexOf("'crm'") > -1) b.insertAdjacentHTML('beforeend', '<b>' + n + '</b>'); });
+};
+const _startV11 = start;
+start = function () {
+  _startV11();
+  sub(db.collection('banners'), s => { S.bnr = s.docs.map(d => Object.assign({ _id: d.id }, d.data())); if (S.tab === 'media') mediaFill(); });
+  sub(db.collection('gallery'), s => { S.gal = s.docs.map(d => Object.assign({ _id: d.id }, d.data())); if (S.tab === 'media') mediaFill(); });
+  sub(db.doc('settings/general'), d => { const g = d.exists ? d.data() : {}; if (!g.crmCut && !S._cutSet) { S._cutSet = true; db.doc('settings/general').set({ crmCut: Date.now() }, { merge: true }).catch(() => {}); } nav(); if (S.tab === 'crm') crmFill(); });
+};
+
+/* ---------- customer detail page ---------- */
+function cdOpen(uid) {
+  const u = (S.users || []).find(x => x.uid === uid); if (!u) return;
+  const inf = userInfo(u), all = (S.allOrders || []).filter(o => o.userId === uid || inf.os.includes(o)).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  if (isNewUser(u)) userSeen(uid);
+  $('cd-body').innerHTML = `<div class="sp"><b class="gold" style="font-size:1.1rem">${provOf(u) === 'google' ? GIC : EIC} ${esc(u.name || 'عميل')}</b><button class="btn s g n" onclick="$('cd').classList.remove('on')">إغلاق ✕</button></div>
+<div class="card" style="margin-top:.5rem"><div class="row"><div><span class="mut">Customer ID</span><br><b style="font-family:monospace">${esc(cid(u))}</b></div><div><span class="mut">طريقة التسجيل</span><br><b>${provOf(u) === 'google' ? 'Google' : 'بريد وكلمة سر'}</b></div><div><span class="mut">تاريخ التسجيل</span><br><b>${u.ts ? esc(new Date(Number(u.ts)).toLocaleDateString('ar-EG')) : '—'}</b></div></div>
+<div class="row" style="margin-top:.4rem"><div><span class="mut">الهاتف</span><br><b dir="ltr">${esc(inf.phone || '—')}</b> ${phoneIcons(inf.phone)}</div><div><span class="mut">الإيميل المعتمد</span><br><b dir="ltr">${esc(u.recoveryEmail || (provOf(u) === 'google' ? u.email : '') || '—')}</b></div></div>
+<div style="margin-top:.4rem"><span class="mut">العنوان:</span> ${esc(inf.addr || '—')}</div>
+<div class="row" style="margin-top:.4rem"><div class="stat"><b>${all.length}</b>إجمالي الطلبات</div><div class="stat"><b>${money(inf.spent)}</b>المشتريات المحصّلة ج.م</div></div></div>
+<b class="gold">🧾 كل الطلبات والفواتير</b>
+${all.map(o => { const p = o.payment || {}; return `<div class="card"><div class="sp"><b class="gold">#${esc(o.orderId)}</b><span class="mut">${esc(new Date(o.timestamp).toLocaleString('ar-EG'))}</span><span class="nbadge" style="background:#4F46E5;color:#fff">${esc(stN(o))}</span>${isArch(o) ? '<span class="mut">🗄 مؤرشف</span>' : ''}</div><div class="mut">${(o.items || []).map(i => esc(i.name) + ' (' + esc(i.size) + ') ×' + (Number(i.quantity) || 0)).join('<br>')}</div><div>الدفع: <b>${esc(PAY[p.method] || p.method)}</b> · الإجمالي: <b class="gold">${money(p.total)} ج.م</b></div>${typeof payLine === 'function' ? payLine(o) : ''}<div class="row n" style="margin-top:.3rem"><button class="btn s g" data-id="${esc(o.orderId)}" onclick="printInv(this.dataset.id)">🖨 طباعة</button><button class="btn s g" data-id="${esc(o.orderId)}" onclick="pdfInv(this.dataset.id)">PDF</button><button class="btn s g" data-id="${esc(o.orderId)}" onclick="pngInv(this.dataset.id)">صورة</button></div></div>`; }).join('') || '<p class="mut">لا توجد طلبات لهذا العميل.</p>'}
+<div class="row" style="margin-top:.6rem"><button class="btn r s" data-u="${esc(uid)}" onclick="accDelete2(this.dataset.u)">🗑 حذف الحساب نهائيًا من Firebase</button></div>`;
+  $('cd').classList.add('on');
+}
+
+/* ---------- real account deletion (Firebase Auth + Firestore) ---------- */
+async function accDelete2(uid) {
+  const u = (S.users || []).find(x => x.uid === uid) || {};
+  if (!SU() || !SKEY()) { toast('الحذف الحقيقي من Firebase Authentication محتاج رابط السكربت ومفتاح الأدمن (الإعلان والإعدادات) — هنكمل بالحذف الجزئي'); return accDelete(uid); }
+  if (!(await cfm('حذف حساب «' + (u.name || uid) + '» نهائيًا من Firebase؟\nمش هيقدر يدخل تاني، وهيتعامل كأنه عمره ما سجّل (ويقدر يسجّل من جديد بنفس الإيميل).', { title: 'حذف حساب عميل', ok: 'احذف الحساب' }))) return;
+  const os = (S.allOrders || []).filter(o => o.userId === uid), rs = (S.rev || []).filter(r => r.userId === uid); let wipeAll = false;
+  if (os.length || rs.length) wipeAll = await cfm('الحساب ده عنده ' + os.length + ' طلب و' + rs.length + ' تقييم.\nتحب نمسحهم كمان؟ (إلغاء = الطلبات والتقييمات تفضل محفوظة للمحاسبة)', { title: 'بيانات الحساب', ok: 'امسحهم كمان' });
+  try {
+    await db.collection('blocked').doc(uid).set({ reason: 'deleted', name: u.name || '', ts: Date.now() });   // يفصل جلسته فورًا
+    const r = await scriptApi({ action: 'deleteUser', uid });
+    if (!r || !r.ok) { await db.collection('blocked').doc(uid).delete().catch(() => {}); return toast('❌ تعذّر الحذف من Firebase: ' + (SCERR[r && r.err] || r && r.err || 'خطأ')); }
+    const b = db.batch(); b.delete(db.collection('users').doc(uid));
+    if (wipeAll) { os.forEach(o => b.delete(db.collection('orders').doc(String(o.orderId)))); rs.forEach(x => b.delete(db.collection('reviews').doc(x._id))); }
+    await b.commit(); $('cd').classList.remove('on'); toast('✅ تم حذف الحساب نهائيًا من Firebase');
+    setTimeout(() => db.collection('blocked').doc(uid).delete().catch(() => {}), 8000);
+  } catch (e) { toast('تعذّر: ' + (e.code || e.message)); }
+}
+
+/* ---------- re-render lists every minute so the 7-day archive moves by itself ---------- */
+setInterval(() => { try { if (S.tab === 'orders') fill(); } catch (e) {} }, 60000);
+
+/* ---------- import the 6 default gallery photos shipped inside index.html ---------- */
+async function glImportDefaults() {
+  try {
+    const t = await (await fetch('index.html?' + Date.now())).text();
+    const m = t.match(/<script id="sh-gal-def"[^>]*>([\s\S]*?)<\/script>/); if (!m) return toast('ملف index.html الجديد مش مرفوع');
+    const L = JSON.parse(m[1]), b = db.batch();
+    L.forEach((x, i) => b.set(db.collection('gallery').doc(), { url: x.url, caption: x.caption, order: i + 1, hidden: false, ts: Date.now() }));
+    await b.commit(); toast('تم نقل ' + L.length + ' صور للمعرض — تقدر تعدّلها أو تحذفها');
+  } catch (e) { toast('تعذّر الاستيراد: ' + (e.message || e.code)); }
+}
+const _mf = mediaFill;
+mediaFill = function () {
+  _mf();
+  const g = $('mgl'); if (g && !S.gal.length && !g.querySelector('#gl-imp')) g.insertAdjacentHTML('afterbegin', '<div class="warn" id="gl-imp" style="background:#4f46e51a;border-color:#4f46e566;color:#c7d2fe">المتجر بيعرض حاليًا 6 صور افتراضية (صور التصوير بتاعتكم). عشان تعدّلها أو تحذف منها: <button class="btn s" onclick="glImportDefaults()">نقل الصور الافتراضية للوحة</button></div>');
+};
+
 </script>
 </body></html>
