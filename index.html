@@ -4077,7 +4077,7 @@ ${paymentSection}
     place: (c, o, a) => {
       const narrow = window.innerWidth < 640, SP = narrow ? 54 : 62;
       const sc = a < 1 ? 1.08 - .18 * a : 1 - .1 * a;
-      c.style.transform = 'translateX(' + (-o * SP) + '%) translateZ(' + (-a * 130) + 'px) rotateY(' + (o * 34) + 'deg) scale(' + sc.toFixed(4) + ')';
+      c.style.transform = 'translateX(' + (o * SP) + '%) translateZ(' + (-a * 130) + 'px) rotateY(' + (-o * 34) + 'deg) scale(' + sc.toFixed(4) + ')';
       const op = narrow ? (a <= 1 ? 1 - .45 * a : .55 * clamp01(2 - a)) : clamp01(1 - a * .3) * clamp01((2.4 - a) / .4);
       c.style.opacity = op.toFixed(3); c.style.zIndex = String(100 - Math.round(a * 10)); c.style.pointerEvents = op < .05 ? 'none' : 'auto';
       c.classList.toggle('co-on', a < .5);
