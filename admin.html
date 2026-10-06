@@ -900,5 +900,39 @@ mediaFill = function () {
   const g = $('mgl'); if (g && !S.gal.length && !g.querySelector('#gl-imp')) g.insertAdjacentHTML('afterbegin', '<div class="warn" id="gl-imp" style="background:#4f46e51a;border-color:#4f46e566;color:#c7d2fe">المتجر بيعرض حاليًا 6 صور افتراضية (صور التصوير بتاعتكم). عشان تعدّلها أو تحذف منها: <button class="btn s" onclick="glImportDefaults()">نقل الصور الافتراضية للوحة</button></div>');
 };
 
+/* ===================== admin v12: archived orders = search + compact summary only ===================== */
+function archView() {
+  return `${archBar()}<div class="row" style="margin:.5rem 0"><input class="field" id="arc-q" placeholder="بحث في الأرشيف: كود الفاتورة أو الاسم أو الهاتف" value="${esc(S.q)}" oninput="S.q=this.value;fill()"><select onchange="S.sort=this.value;fill()" style="flex:0 0 150px"><option value="time" ${S.sort === 'old' ? '' : 'selected'}>الأحدث أولًا</option><option value="old" ${S.sort === 'old' ? 'selected' : ''}>الأقدم أولًا</option></select></div><div id="arc-sum" class="mut" style="font-size:.85rem;margin:.2rem 0 .4rem"></div><div id="arc-list"></div>`;
+}
+function archFill() {
+  const list = $('arc-list'); if (!list) return;
+  const q = (S.q || '').trim().toLowerCase();
+  const L = (S.orders || []).filter(o => {
+    if (!isArch(o)) return false;
+    if (!q) return true;
+    const x = o.customer || {};
+    return [o.orderId, x.name, x.phone, x.altPhone].join(' ').toLowerCase().includes(q);
+  }).sort((a, b) => S.sort === 'old' ? new Date(a.timestamp) - new Date(b.timestamp) : new Date(b.timestamp) - new Date(a.timestamp));
+  const net = o => Math.max(0, (Number((o.payment || {}).total) || 0) - (Number(o.returnedAmount) || 0));
+  const done = L.filter(o => stN(o) === ST[3]);
+  const sum = $('arc-sum');
+  if (sum) sum.innerHTML = `<b>${L.length}</b> فاتورة مؤرشفة · صافي المستلم: <b class="gold">${money(done.reduce((a, o) => a + net(o), 0))} ج.م</b>`;
+  const col = st => st === ST[3] ? '#10b981' : st === ST[5] ? '#ef4444' : '#f59e0b';
+  list.innerHTML = L.map(o => {
+    const x = o.customer || {}, p = o.payment || {}, st = stN(o), n = (o.items || []).reduce((a, i) => a + (Number(i.quantity) || 0), 0), id = esc(o.orderId);
+    return `<div class="card" style="padding:.55rem .75rem;margin:.4rem 0"><div class="sp" style="align-items:center"><b class="gold">#${id}</b><span class="mut" style="font-size:.78rem">${esc(new Date(o.timestamp).toLocaleDateString('ar-EG'))}</span><span style="font-size:.72rem;font-weight:800;padding:.05rem .6rem;border-radius:99px;border:1px solid ${col(st)};color:${col(st)}">${esc(st)}</span></div><div class="sp" style="align-items:center;margin-top:.25rem"><span><b>${esc(x.name)}</b> <span class="mut" dir="ltr">${esc(x.phone)}</span></span><span><span class="mut" style="font-size:.78rem">${n} قطعة · </span><b class="gold">${money(p.total)} ج.م</b>${Number(o.returnedAmount) > 0 ? '<span class="mut" style="font-size:.72rem"> (مرتجع ' + money(o.returnedAmount) + ')</span>' : ''}</span></div><div class="row" style="margin-top:.35rem"><button class="btn s g" data-id="${id}" onclick="printInv(this.dataset.id)">فاتورة</button><button class="btn s g" data-id="${id}" onclick="pdfInv(this.dataset.id)">PDF</button></div></div>`;
+  }).join('') || '<p class="mut">لا توجد فواتير مؤرشفة' + (q ? ' مطابقة للبحث.' : ' بعد.') + '</p>';
+}
+const _viewARC = view;
+view = function () {
+  if (S.tab === 'orders' && S.arch) { $('v').innerHTML = archView(); archFill(); return; }
+  return _viewARC.apply(this, arguments);
+};
+const _fillXARC = fillX;
+fillX = function (t) {
+  if (t === 'orders' && S.arch) { try { finCheck(); } catch (e) {} if (!$('arc-list')) { $('v').innerHTML = archView(); } archFill(); return; }
+  return _fillXARC.apply(this, arguments);
+};
+
 </script>
 </body></html>
