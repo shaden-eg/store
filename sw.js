@@ -1,5 +1,5 @@
 // Service Worker - شَادِن SHADEN (GitHub Pages)
-const CACHE = 'shaden-v9';
+const CACHE = 'shaden-v10';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {
@@ -19,4 +19,3 @@ self.addEventListener('fetch', (e) => {
   e.respondWith(fetch(req).then((r) => { if (r.ok) { const c = r.clone(); caches.open(CACHE).then((x) => x.put(req, c)); } return r; })
     .catch(() => caches.match(req)));
 });
-```[cite: 1]
