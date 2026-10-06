@@ -77,10 +77,73 @@ html,body{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjus
 .rsopt input{flex:none;width:auto}
 .rsopt.fac{border-color:#f43f5e88;background:#f43f5e14}
 </style>
+<style id="admin-v12-style">
+/* header buttons */
+header .row.n{flex-wrap:nowrap;gap:.4rem}
+header .row.n>*{flex:none}
+.hb{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;min-width:84px;height:38px;padding:0 1rem;border-radius:99px;font-weight:800;font-size:.85rem;text-align:center;text-decoration:none;line-height:1;cursor:pointer}
+.hb-shop{background:#1f2937;border:1px solid var(--ln);color:#fff}
+.hb-out{background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff;border:1px solid #fca5a5;box-shadow:0 4px 14px rgba(239,68,68,.35)}
+.hb-out .ic{width:1.1em;height:1.1em;margin:0}
+.hb:active{transform:scale(.96)}
+/* compact KPI cards (replace the big circles everywhere) */
+.fgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:.4rem!important;justify-items:stretch!important}
+@media(min-width:620px){.fgrid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))!important}}
+.fgrid .stat{border-radius:12px!important;aspect-ratio:auto!important;max-width:none!important;flex-direction:row-reverse!important;justify-content:space-between!important;align-items:center!important;gap:.4rem;padding:.5rem .7rem!important;text-align:right;font-size:.7rem!important;line-height:1.35;border:1px solid var(--ln)!important;border-inline-start:3px solid var(--gold,#E5C07B)!important;box-shadow:none!important;overflow:visible!important}
+.fgrid .stat b{font-size:.95rem!important;margin:0!important;white-space:nowrap;display:block}
+/* status chips (filter) */
+.chips{display:flex;gap:.4rem;overflow-x:auto;padding:.2rem .15rem .55rem;margin:.5rem 0 0;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;display:inline-flex;align-items:center;gap:.4rem;padding:.38rem .75rem;border-radius:99px;background:var(--card);border:1px solid var(--ln);color:#cbd5e1;font-size:.8rem;font-weight:700;white-space:nowrap;cursor:pointer}
+.chip i{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.chip b{background:rgba(255,255,255,.09);border-radius:99px;padding:0 .45rem;min-width:1.4rem;text-align:center;color:#fff;font-size:.78rem}
+.chip.on{border-color:var(--c);background:rgba(255,255,255,.07);color:#fff;box-shadow:0 0 0 1px var(--c) inset}
+.chip.on b{background:var(--c);color:#111}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin:.1rem 0 .5rem}
+.kpis>div{background:var(--card);border:1px solid var(--ln);border-radius:12px;padding:.4rem .65rem;display:flex;justify-content:space-between;align-items:center;gap:.3rem;font-size:.7rem;color:#94a3b8}
+.kpis b{color:var(--gold);font-size:.88rem;white-space:nowrap}
+/* order card */
+.oc{padding:.7rem!important}
+.oc-h{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap}
+.oc-h .dt{margin-inline-start:auto;font-size:.72rem}
+.oc-seen{padding:.15rem .6rem!important}
+.oc-st{display:block;width:100%;margin:.5rem 0 .2rem;padding:.55rem .7rem;border-radius:12px;font-weight:800;font-size:.9rem;border:1.5px solid var(--c);color:var(--c);background:rgba(255,255,255,.04)}
+.oc-st option{color:#111;background:#fff}
+.oc-row{display:flex;gap:.55rem;align-items:flex-start;padding:.4rem 0;border-top:1px dashed var(--ln);font-size:.86rem}
+.oc-row>.ic{width:1.15rem;height:1.15rem;margin-top:.15rem;color:var(--gold,#E5C07B)}
+.oc-v{flex:1;min-width:0}
+.oc-ph{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:.15rem}
+.oc-t{width:100%;border-collapse:collapse;font-size:.78rem;margin:.1rem 0}
+.oc-t th{color:#94a3b8;font-weight:700;text-align:right;padding:.2rem .3rem;border-bottom:1px solid var(--ln)}
+.oc-t td{padding:.25rem .3rem;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:top}
+.oc-t .c{text-align:center;white-space:nowrap}
+.oc-fin{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.3rem;margin-top:.4rem}
+@media(max-width:430px){.oc-fin{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.oc-fin>div{background:rgba(255,255,255,.04);border:1px solid var(--ln);border-radius:10px;padding:.35rem .5rem;text-align:center;font-size:.68rem;color:#94a3b8}
+.oc-fin b{display:block;font-size:.88rem;color:#fff;margin-top:.1rem;overflow-wrap:anywhere}
+.oc-fin .g b{color:var(--gold,#E5C07B)}
+.oc-fin .r b{color:#fca5a5}
+.oc-tags{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.4rem}
+.oc-tags span{font-size:.68rem;padding:.1rem .55rem;border-radius:99px;background:rgba(229,192,123,.12);border:1px solid rgba(229,192,123,.35);color:#E5C07B}
+.oc-link{margin-top:.4rem;width:100%;padding:.45rem;border-radius:10px;border:1px dashed #f97316;color:#fdba74;background:rgba(249,115,22,.08);font-weight:700;font-size:.78rem}
+.oc-tb{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.3rem;margin-top:.55rem}
+.oc-tb button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;padding:.45rem .1rem;border-radius:10px;background:#1f2937;border:1px solid var(--ln);color:#e5e7eb;font-size:.6rem;font-weight:700;line-height:1.1;white-space:nowrap}
+.oc-tb .ic{width:1.25rem;height:1.25rem;margin:0}
+.oc-tb button.d{background:#7f1d1d;border-color:#b91c1c;color:#fecaca}
+.oc-tb button:active{transform:scale(.95)}
+/* toggle switch */
+.tgl{display:flex;align-items:center;gap:.7rem;cursor:pointer;position:relative}
+.tgl input{position:absolute;opacity:0;width:0;height:0;flex:none}
+.tgl .sw{position:relative;flex:none;width:48px;height:27px;border-radius:99px;background:#374151;transition:background .2s}
+.tgl .sw::after{content:"";position:absolute;top:3px;right:3px;width:21px;height:21px;border-radius:50%;background:#fff;transition:right .2s}
+.tgl input:checked+.sw{background:#10b981}
+.tgl input:checked+.sw::after{right:24px}
+.tgl input:focus-visible+.sw{outline:2px solid #E5C07B;outline-offset:2px}
+</style>
 </head><body>
 <div id="gate" class="gate"><div><h1>شَادِن</h1><p class="mut" style="margin:.5rem 0 1rem">لوحة التحكم — للإدارة فقط</p><button class="btn" onclick="login()">الدخول بحساب جوجل</button><p id="gmsg" class="warn" style="display:none;margin-top:1rem"></p></div></div>
 <div id="app" style="display:none">
-<header><h1>لوحة شَادِن</h1><div class="row n"><a href="index.html" class="btn g s" style="text-decoration:none">المتجر</a><button class="btn g s" onclick="auth.signOut()">خروج</button></div></header>
+<header><h1>لوحة شَادِن</h1><div class="row n"><a href="index.html" class="hb hb-shop">المتجر</a><button class="hb hb-out" onclick="auth.signOut()" aria-label="تسجيل الخروج"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>خروج</span></button></div></header>
 <nav id="nav"></nav><main id="v"></main></div>
 <div id="npop" class="modal"><div class="box"><b class="gold" style="font-size:1.1rem"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> طلب جديد وصل</b><div id="npop-body"></div><div class="row" style="margin-top:.6rem"><button class="btn" onclick="openNew()">فتح الطلب</button><button class="btn g" onclick="document.getElementById('npop').classList.remove('on')">إغلاق</button></div></div></div>
 <div id="cel" class="modal"><div class="box" style="text-align:center"><div style="font-size:3.2rem"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><h2 class="gold" id="cel-t" style="margin:.4rem 0"></h2><button class="btn" onclick="document.getElementById('cel').classList.remove('on')">تمام</button></div></div>
@@ -129,7 +192,7 @@ function start(){
 }
 var nav=function(){const p=S.rev.filter(r=>r.status==='pending').length;$('nav').innerHTML=TABS.map(t=>`<button class="${S.tab===t[0]?'on':''}" onclick="S.tab='${t[0]}';S.dirty=false;S.shipEdit=null;S.catEdit=null;nav();view()">${t[1]}${t[0]==='rev'&&p?`<b>${p}</b>`:''}${t[0]==='trash'&&trashN()?`<b>${trashN()}</b>`:''}</button>`).join('')}
 function view(){const v=$('v'),t=S.tab;
- if(t==='orders')v.innerHTML=`${archBar()}<div id="stt" class="grid fgrid" style="margin:.6rem 0"></div><div class="row"><input class="field" placeholder="بحث: كود الفاتورة أو الاسم أو الهاتف" value="${esc(S.q)}" oninput="S.q=this.value;fill()"><select onchange="S.sort=this.value;fill()"><option value="time" ${S.sort==='old'?'':'selected'}>الأحدث أولًا</option><option value="old" ${S.sort==='old'?'selected':''}>الأقدم أولًا</option></select><select onchange="S.pay=this.value;fill()"><option value="all">كل حالات الدفع</option><option value="paid" ${S.pay==='paid'?'selected':''}>مدفوعة بالكامل</option><option value="partial" ${S.pay==='partial'?'selected':''}>مدفوعة جزئيًا</option><option value="unpaid" ${S.pay==='unpaid'?'selected':''}>غير مدفوعة</option></select><select onchange="S.st=this.value;fill()"><option value="all">كل الحالات</option>${ST.map(s=>`<option>${s}</option>`).join('')}</select></div><div class="row"><button class="btn g s" onclick="exp('o')">تصدير الطلبات (Excel)</button><button class="btn g s" onclick="exp('c')">تصدير العملاء (Excel)</button><button class="btn s" onclick="markAllSeen()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> تمت قراءة الكل</button></div><div id="ol"></div>`;
+ if(t==='orders')v.innerHTML=`${archBar()}<div id="stt"></div><div class="row"><input class="field" placeholder="بحث: كود الفاتورة أو الاسم أو الهاتف" value="${esc(S.q)}" oninput="S.q=this.value;fill()"><select onchange="S.sort=this.value;fill()"><option value="time" ${S.sort==='old'?'':'selected'}>الأحدث أولًا</option><option value="old" ${S.sort==='old'?'selected':''}>الأقدم أولًا</option></select><select onchange="S.pay=this.value;fill()"><option value="all">كل حالات الدفع</option><option value="paid" ${S.pay==='paid'?'selected':''}>مدفوعة بالكامل</option><option value="partial" ${S.pay==='partial'?'selected':''}>مدفوعة جزئيًا</option><option value="unpaid" ${S.pay==='unpaid'?'selected':''}>غير مدفوعة</option></select></div><div class="row"><button class="btn g s" onclick="exp('o')">تصدير الطلبات (Excel)</button><button class="btn g s" onclick="exp('c')">تصدير العملاء (Excel)</button><button class="btn s" onclick="markAllSeen()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> تمت قراءة الكل</button></div><div id="ol"></div>`;
  if(t==='cat')v.innerHTML=catView();
  if(t==='ship'){if(!S.shipEdit)S.shipEdit=(S.ship.length?S.ship:DEFGOV).map(g=>Object.assign({},g));v.innerHTML=`<div class="card"><b class="gold">المحافظات وأسعار الشحن</b><p class="mut">${S.ship.length?'الأسعار دي هي المعتمدة حاليًا في المتجر.':'لسه ماتحفظتش في السحابة — دي القائمة الافتراضية (27 محافظة). اضغط حفظ لتفعيلها.'}</p><div id="shl"></div><div class="row"><button class="btn g" onclick="S.dirty=true;S.shipEdit.push({id:'g'+Date.now(),name:'',rate:60});shRows()">+ إضافة محافظة</button><button class="btn" onclick="saveShip()">حفظ الأسعار</button></div></div>`;shRows()}
  if(t==='pol')v.innerHTML=polView();
@@ -144,10 +207,10 @@ function view(){const v=$('v'),t=S.tab;
  fill()}
 function fill(){const t=S.tab;fillX(t);
  if(t==='orders'&&$('ol')){const c={};S.orders.forEach(o=>{const s=LEG[o.status]||o.status;c[s]=(c[s]||0)+1});const rev=S.orders.filter(o=>(LEG[o.status]||o.status)===ST[3]).reduce((a,o)=>a+(Number(o.payment&&o.payment.total)||0)-(Number(o.returnedAmount)||0),0);
-  $('stt').innerHTML=`<div class="stat"><b>${S.orders.length}</b>كل الطلبات</div>`+ST.map(s=>`<div class="stat"><b>${c[s]||0}</b>${s}</div>`).join('')+`<div class="stat"><b>${money(rev)}</b>صافي المبيعات المحصّلة (بعد المرتجعات) ج.م</div>`+`<div class="stat"><b>${money(S.ret.reduce((a,r)=>a+(Number(r.amount)||0),0))}</b>قيمة المرتجعات ج.م</div>`;
+  sttRender();
   const q=S.q.trim().toLowerCase(),d=S.sort==='id'?-1:1;let L=S.orders.filter(o=>{const x=o.customer||{};return(S.st==='all'||(LEG[o.status]||o.status)===S.st)&&(!S.pay||S.pay==='all'||payState(o)===S.pay)&&(q||isArch(o)===!!S.arch)&&(!q||[o.orderId,x.name,x.phone,x.altPhone].join(' ').toLowerCase().includes(q))});
   L.sort((a,b)=>S.sort==='old'?new Date(a.timestamp)-new Date(b.timestamp):new Date(b.timestamp)-new Date(a.timestamp));
-  $('ol').innerHTML=L.map(o=>{const x=o.customer||{},p=o.payment||{},cur=LEG[o.status]||o.status,ph=String(x.phone||'').replace(/\D/g,'');return`<div class="card ${isUnread(o)?'unread':''}"><div class="sp"><b class="gold">#${esc(o.orderId)}</b>${isUnread(o)?'<span class="nbadge">جديد</span>':''}<span class="mut">${esc(new Date(o.timestamp).toLocaleString('ar-EG'))}</span>${isUnread(o)?`<button class="btn s" data-id="${esc(o.orderId)}" onclick="markSeen(this.dataset.id)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> تمت القراءة</button>`:''}</div><div><b>${esc(x.name)}</b> — <span dir="ltr">${esc(x.phone)}</span> ${phoneIcons(x.phone)}${x.altPhone?' <span class="mut">/</span> <span dir="ltr">'+esc(x.altPhone)+'</span> '+phoneIcons(x.altPhone):''}</div><div>${esc(x.governorate)} — ${esc(x.address)}</div><div class="mut">${(o.items||[]).map(i=>esc(i.name)+' ('+esc(i.size)+') ×'+(Number(i.quantity)||0)).join('<br>')}</div>${o.notes?`<div class="warn" style="background:#f59e0b1a;border-color:#f59e0b66;color:#fcd34d"><b>ملاحظات:</b> ${esc(o.notes)}</div>`:''}${x.giftMessage?`<div><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg> ${esc(x.giftMessage)}</div>`:''}<div>الدفع: <b>${esc(PAY[p.method]||p.method)}</b>${p.method!=='cod'?' ('+esc(p.transactionRef)+')':''} · الإجمالي: <b class="gold">${money(p.total)} ج.م</b></div>${payLine(o)}${warn(o)}<div class="row" style="margin-top:.4rem">${ST.map((s,i)=>`<button class="btn s ${cur===s?'':'g'}" data-id="${esc(o.orderId)}" data-i="${i}" onclick="setSt(this.dataset.id,+this.dataset.i)">${s}</button>`).join('')}<button class="btn s g" data-id="${esc(o.orderId)}" onclick="printInv(this.dataset.id)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> فاتورة</button><button class="btn s g" data-id="${esc(o.orderId)}" onclick="pngInv(this.dataset.id)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> PNG</button><button class="btn s g" data-id="${esc(o.orderId)}" onclick="oeOpen(this.dataset.id)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.83 2.83 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg> تعديل الطلب</button><button class="btn s g" data-id="${esc(o.orderId)}" onclick="startRet(this.dataset.id)">↩ مرتجع</button><button class="btn s g" data-id="${esc(o.orderId)}" onclick="printWaybill(this.dataset.id)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> بوليصة شحن</button><button class="btn s g" data-id="${esc(o.orderId)}" onclick="pdfInv(this.dataset.id)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> PDF</button><button class="btn s r" data-id="${esc(o.orderId)}" onclick="trashOrder(this.dataset.id)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> حذف</button></div></div>`}).join('')||'<p class="mut">لا توجد طلبات.</p>'}
+  $('ol').innerHTML=L.map(ordCard).join('')||'<p class="mut">لا توجد طلبات.</p>'}
  if(t==='ret'&&$('rtl'))$('rtl').innerHTML=S.ret.slice().sort((a,b)=>b.ts-a.ts).map(r=>`<div class="card"><div class="sp"><b class="gold">#${esc(r.orderId)}</b><span class="mut">${esc(new Date(r.ts).toLocaleString('ar-EG'))}</span></div><div class="mut">${(r.items||[]).map(i=>esc(i.name)+' ('+esc(i.size)+') ×'+i.quantity).join('<br>')}</div><div>${r.action==='restock'?'رجعت للمخزون':'تالف'} · استرداد: <b class="gold">${money(r.amount)} ج.م</b>${r.reason?' · '+esc(r.reason):''}</div></div>`).join('')||'<p class="mut">لا توجد مرتجعات مسجلة.</p>';
  if(t==='prods'&&$('pl'))$('pl').innerHTML=S.prods.map(p=>`<div class="card"><div class="row"><img class="th n" src="${esc(p.image)}" alt=""><div><b>${esc(p.name)}</b> <span class="mut">${esc(p.category)}</span><br><span class="gold">${Object.entries(p.prices||{}).map(([k,v])=>k+': '+money(v)).join(' · ')}${typeof p.stock==='number'?' · مخزون: '+p.stock:''}${p.damaged?' · تالف: '+p.damaged:''}</span></div><div class="row n"><span>نفدت</span><button class="sw ${p.soldOut?'on':''}" data-id="${p.id}" data-f="soldOut" onclick="tog(this)" aria-label="نفدت الكمية"></button><span>مخفي</span><button class="sw ${p.hidden?'on':''}" data-id="${p.id}" data-f="hidden" onclick="tog(this)" aria-label="إخفاء"></button></div><div class="row n"><button class="btn s" data-id="${p.id}" onclick="S.edit=+this.dataset.id;view();scrollTo(0,0)">تعديل</button><button class="btn s r" data-id="${p.id}" onclick="delProd(+this.dataset.id)">حذف</button></div></div></div>`).join('')||'<p class="mut">لا توجد عطور بعد. لو أول مرة، افتح <a href="index.html#admin">index.html#admin</a> واضغط "رفع الكتالوج للسحابة" مرة واحدة.</p>';
  if(t==='cpn'&&$('cl'))$('cl').innerHTML=S.cpn.map(c=>`<div class="card sp"><div><b class="gold">${esc(c.code)}</b> — ${c.type==='fixed'?money(c.value)+' ج.م':c.value+'%'} ${c.showInBar?'· في الشريط':''}</div><div class="row n"><button class="sw ${c.active!==false?'on':''}" data-id="${esc(c._id)}" onclick="cpnTog(this)" aria-label="تفعيل"></button><button class="btn s r" data-id="${esc(c._id)}" onclick="db.collection('coupons').doc(this.dataset.id).delete()">حذف</button></div></div>`).join('')||'<p class="mut">لا توجد كوبونات.</p>';
@@ -367,11 +430,11 @@ function maybeSeed(){if(S._revLoaded&&S._genLoaded&&!S.gen.reviewsSeeded&&!S.rev
 function alertRev(r){toast('تعليق جديد من '+r.name);document.title='تعليق جديد!';setTimeout(()=>document.title='لوحة تحكم شَادِن',6000);bell();$('npop-body').innerHTML=`<div class="sp"><b>${esc(r.name)}</b><span class="gold">${'★'.repeat(r.stars||0)}</span></div><div>${esc(r.text)}</div><div class="mut">هيظهر في المتجر لما تقرر تظهره.</div>`;$('npop').dataset.id='';$('npop').dataset.kind='rev';$('npop').classList.add('on')}
 
 /* ---- policies & settings (shipping rule, gift price, contacts, beneficiary) ---- */
-var polView=function(){const p=polMerged();return `<div class="card"><b class="gold">الشحن المجاني والحدود</b><label class="row"><input type="checkbox" id="po-rl" ${p.requireLogin===false?'':'checked'} style="flex:none"> إلزام العميل بتسجيل الدخول قبل تأكيد الطلب (عشان يتابع حالة طلبه في «طلباتي»)</label><label class="row"><input type="checkbox" id="po-fse" ${p.freeShipEnabled===false?'':'checked'} style="flex:none"> تفعيل الشحن المجاني عند مبلغ معين</label><div class="row"><label class="mut">حد الشحن المجاني (ج.م) — 0 = إخفاء الشحن المجاني من المتجر<input class="field" id="po-fs" type="number" min="0" value="${esc(p.freeShipMin!==undefined&&p.freeShipMin!==''?p.freeShipMin:1200)}"></label><label class="mut">سعر تغليف الهدية (ج.م) — 0 = إخفاء الهدية من المتجر<input class="field" id="po-gp" type="number" min="0" value="${esc(p.giftPrice!==undefined?p.giftPrice:50)}"></label></div></div>
+var polView=function(){const p=polMerged();return `<div class="card"><b class="gold">تنبيه البريد والرسائل غير المرغوب فيها (Spam)</b><label class="tgl" style="margin:.6rem 0 .3rem"><input type="checkbox" id="po-mn" ${p.mailNotice===false?'':'checked'} onchange="mailNoticeSave(this.checked)"><span class="sw"></span><span id="po-mn-t">${p.mailNotice===false?'التنبيه متوقف — مخفي عن العملاء':'التنبيه شغّال — ظاهر للعملاء'}</span></label><p class="mut" style="font-size:.82rem;line-height:1.8">بيظهر في فوتر المتجر، وفي فاتورة تأكيد الطلب، وفي شاشة «طلباتي». بمجرد ما توقفه بيختفي من الثلاث أماكن عند كل العملاء فورًا، وتقدر ترجّعه في أي وقت.</p></div><div class="card"><b class="gold">الشحن المجاني والحدود</b><label class="row"><input type="checkbox" id="po-rl" ${p.requireLogin===false?'':'checked'} style="flex:none"> إلزام العميل بتسجيل الدخول قبل تأكيد الطلب (عشان يتابع حالة طلبه في «طلباتي»)</label><label class="row"><input type="checkbox" id="po-fse" ${p.freeShipEnabled===false?'':'checked'} style="flex:none"> تفعيل الشحن المجاني عند مبلغ معين</label><div class="row"><label class="mut">حد الشحن المجاني (ج.م) — 0 = إخفاء الشحن المجاني من المتجر<input class="field" id="po-fs" type="number" min="0" value="${esc(p.freeShipMin!==undefined&&p.freeShipMin!==''?p.freeShipMin:1200)}"></label><label class="mut">سعر تغليف الهدية (ج.م) — 0 = إخفاء الهدية من المتجر<input class="field" id="po-gp" type="number" min="0" value="${esc(p.giftPrice!==undefined?p.giftPrice:50)}"></label></div></div>
  <div class="card"><b class="gold">بيانات التحويل (بتظهر في الشيك أوت والفواتير)</b><div class="row"><input class="field" id="po-vn" placeholder="رقم فودافون كاش" value="${esc(p.vodafoneNumber)}"><input class="field" id="po-vt" placeholder="اسم المستفيد (فودافون كاش)" value="${esc(p.vodafoneTitle)}"></div><div class="row"><input class="field" id="po-ip" placeholder="رقم / عنوان إنستاباي" value="${esc(p.instapayPhone)}"><input class="field" id="po-it" placeholder="اسم المستفيد (إنستاباي)" value="${esc(p.instapayTitle)}"></div></div>
  <div class="card"><b class="gold">قنوات التواصل</b><div class="row"><input class="field" id="po-ph" placeholder="رقم الاتصال" value="${esc(p.phone)}"><input class="field" id="po-wa" placeholder="رقم الواتساب" value="${esc(p.whatsapp)}"></div><input class="field" id="po-lt" placeholder="رابط Linktree (https://...)" value="${esc(p.linktree)}"><input class="field" id="po-fb" placeholder="رابط فيسبوك (https://...)" value="${esc(p.facebook)}"><input class="field" id="po-ig" placeholder="رابط إنستجرام (https://...)" value="${esc(p.instagram)}"><input class="field" id="po-tt" placeholder="رابط تيك توك (https://...)" value="${esc(p.tiktok)}"></div>
  <div class="card"><b class="gold">السياسات</b><label class="mut">سياسة الاستبدال والاسترجاع</label><textarea id="po-ret" rows="5" oninput="S.dirty=true">${esc(p.returnPolicy)}</textarea><label class="mut">شروط الاستخدام</label><textarea id="po-terms" rows="5" oninput="S.dirty=true">${esc(p.terms)}</textarea><label class="mut">نقاط السياسات في الفوتر (سطر لكل نقطة — لو فاضي بتظهر الافتراضية)</label><textarea id="po-foot" rows="4" oninput="S.dirty=true">${esc(p.footerPoints)}</textarea></div><div class="card"><b class="gold">طرق الدفع المتاحة للعملاء</b><p class="mut" style="font-size:.85rem">لو شلت العلامة، الطريقة بتظهر للعميل رمادية وغير قابلة للاختيار.</p>${[['cod','الدفع عند الاستلام'],['vodafone','فودافون كاش'],['instapay','إنستاباي']].map(m=>`<label class="row"><input type="checkbox" id="po-on-${m[0]}" ${(p.payOff||{})[m[0]]?'':'checked'} style="flex:none"> ${m[1]}</label>`).join('')}</div><button class="btn" onclick="savePol()">حفظ</button>`}
-async function savePol(){const g=i=>$(i).value.trim(),lt=g('po-lt');if(lt&&!/^https:\/\//.test(lt))return toast('رابط Linktree لازم يبدأ بـ https://');for(const k of ['po-fb','po-ig','po-tt']){const v=g(k);if(v&&!/^https?:\/\//.test(v))return toast('روابط السوشيال لازم تبدأ بـ https://')}try{await db.doc('settings/policies').set({freeShipEnabled:$('po-fse').checked,requireLogin:$('po-rl').checked,freeShipMin:Number(g('po-fs'))||0,minOrder:0,giftPrice:Math.max(0,Number(g('po-gp')||0)),vodafoneNumber:g('po-vn'),vodafoneTitle:g('po-vt'),instapayPhone:g('po-ip'),instapayTitle:g('po-it'),phone:g('po-ph'),whatsapp:g('po-wa'),linktree:lt,facebook:g('po-fb'),instagram:g('po-ig'),tiktok:g('po-tt'),returnPolicy:g('po-ret'),terms:g('po-terms'),footerPoints:g('po-foot'),payOff:{cod:!$('po-on-cod').checked,vodafone:!$('po-on-vodafone').checked,instapay:!$('po-on-instapay').checked}});S.dirty=false;toast('تم الحفظ — بيتحدّث في المتجر والفواتير فورًا')}catch(e){toast('تعذّر الحفظ: '+e.code)}}
+async function savePol(){const g=i=>$(i).value.trim(),lt=g('po-lt');if(lt&&!/^https:\/\//.test(lt))return toast('رابط Linktree لازم يبدأ بـ https://');for(const k of ['po-fb','po-ig','po-tt']){const v=g(k);if(v&&!/^https?:\/\//.test(v))return toast('روابط السوشيال لازم تبدأ بـ https://')}try{await db.doc('settings/policies').set({freeShipEnabled:$('po-fse').checked,requireLogin:$('po-rl').checked,mailNotice:$('po-mn')?$('po-mn').checked:(S.pol&&S.pol.mailNotice!==false),freeShipMin:Number(g('po-fs'))||0,minOrder:0,giftPrice:Math.max(0,Number(g('po-gp')||0)),vodafoneNumber:g('po-vn'),vodafoneTitle:g('po-vt'),instapayPhone:g('po-ip'),instapayTitle:g('po-it'),phone:g('po-ph'),whatsapp:g('po-wa'),linktree:lt,facebook:g('po-fb'),instagram:g('po-ig'),tiktok:g('po-tt'),returnPolicy:g('po-ret'),terms:g('po-terms'),footerPoints:g('po-foot'),payOff:{cod:!$('po-on-cod').checked,vodafone:!$('po-on-vodafone').checked,instapay:!$('po-on-instapay').checked}});S.dirty=false;toast('تم الحفظ — بيتحدّث في المتجر والفواتير فورًا')}catch(e){toast('تعذّر الحفظ: '+e.code)}}
 
 
 /* ===================== V8: dropdowns, alerts, date filter, bundle upload, diagnostics ===================== */
@@ -933,6 +996,66 @@ fillX = function (t) {
   if (t === 'orders' && S.arch) { try { finCheck(); } catch (e) {} if (!$('arc-list')) { $('v').innerHTML = archView(); } archFill(); return; }
   return _fillXARC.apply(this, arguments);
 };
+
+/* ===================== admin v12: chips · order card · mail-notice switch ===================== */
+function sttRender() {
+  const el = $('stt'); if (!el) return;
+  const base = S.orders.filter(o => !isArch(o)), cnt = {};
+  base.forEach(o => { const s = LEG[o.status] || o.status; cnt[s] = (cnt[s] || 0) + 1; });
+  const cols = ['#f59e0b', '#3b82f6', '#8b5cf6', '#10b981', '#f97316', '#ef4444'];
+  const rev = S.orders.filter(o => (LEG[o.status] || o.status) === ST[3]).reduce((a, o) => a + (Number(o.payment && o.payment.total) || 0) - (Number(o.returnedAmount) || 0), 0);
+  const chip = (key, label, n, col) => `<button type="button" class="chip ${S.st === key || (key === 'all' && (!S.st || S.st === 'all')) ? 'on' : ''}" style="--c:${col}" data-s="${esc(key)}" onclick="S.st=this.dataset.s;fill()"><i></i>${esc(label)}<b>${n}</b></button>`;
+  el.innerHTML = `<div class="chips">${chip('all', 'الكل', base.length, '#94a3b8')}${ST.map((s, i) => chip(s, s, cnt[s] || 0, cols[i])).join('')}</div>` +
+    `<div class="kpis"><div><span>صافي المبيعات المحصّلة</span><b>${money(rev)} ج.م</b></div><div><span>قيمة المرتجعات</span><b>${money(S.ret.reduce((a, r) => a + (Number(r.amount) || 0), 0))} ج.م</b></div></div>`;
+}
+const OIC = (p) => `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const OI = {
+  user: OIC('<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'),
+  pin: OIC('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'),
+  box: OIC('<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>'),
+  note: OIC('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>'),
+  inv: OIC('<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>'),
+  png: OIC('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>'),
+  edit: OIC('<path d="M17 3a2.83 2.83 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5z"/>'),
+  ship: OIC('<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>'),
+  pdf: OIC('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>'),
+  del: OIC('<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>'),
+  ok: OIC('<polyline points="20 6 9 17 4 12"/>')
+};
+function ordCard(o) {
+  const x = o.customer || {}, p = o.payment || {}, cur = LEG[o.status] || o.status, id = esc(o.orderId);
+  const ix = ST.indexOf(cur), total = Number(p.total) || 0, paid = Number(p.paid) || 0, ret = Number(o.returnedAmount) || 0;
+  const rem = (cur === ST[5] || cur === ST[3]) ? 0 : Math.max(0, total - paid - ret), un = isUnread(o);
+  const cols = ['#f59e0b', '#3b82f6', '#8b5cf6', '#10b981', '#f97316', '#ef4444'], col = cols[ix] || '#94a3b8';
+  const opts = (ix < 0 ? `<option selected>${esc(cur)}</option>` : '') + ST.map((s, i) => `<option value="${i}" ${s === cur ? 'selected' : ''}>${s}</option>`).join('');
+  const items = o.items || [];
+  const rows = items.map(i => `<tr><td>${esc(i.name)} <span class="mut">(${esc(i.size)})</span></td><td class="c">×${Number(i.quantity) || 0}</td><td class="c">${money((Number(i.price) || 0) * (Number(i.quantity) || 0))}</td></tr>`).join('');
+  const tags = [];
+  if (Number(p.fee)) tags.push('رسوم فودافون ' + money(p.fee));
+  if (p.freeShipping) tags.push('شحن مجاني');
+  if (o.freeGift) tags.push('هدية: ' + esc(o.freeGift));
+  if (ret) tags.push('مُسترد ' + money(ret) + ' ج.م');
+  if (Number(p.depositRequired) > 0 && cur === ST[0]) tags.push('العربون المطلوب ' + money(p.depositRequired));
+  const tb = (fn, ic, lb, cls) => `<button type="button" class="${cls || ''}" data-id="${id}" onclick="${fn}(this.dataset.id)" title="${lb}" aria-label="${lb}">${ic}<span>${lb}</span></button>`;
+  return `<div class="card oc ${un ? 'unread' : ''}">` +
+    `<div class="oc-h"><b class="gold">#${id}</b>${un ? '<span class="nbadge">جديد</span>' : ''}<span class="mut dt">${esc(new Date(o.timestamp).toLocaleString('ar-EG'))}</span>${un ? `<button type="button" class="btn s oc-seen" data-id="${id}" onclick="markSeen(this.dataset.id)">${OI.ok} تمت القراءة</button>` : ''}</div>` +
+    `<select class="oc-st" style="--c:${col}" data-id="${id}" onchange="setSt(this.dataset.id,+this.value)" aria-label="حالة الطلب">${opts}</select>` +
+    `<div class="oc-row">${OI.user}<div class="oc-v"><b>${esc(x.name)}</b><div class="oc-ph"><span dir="ltr">${esc(x.phone)}</span>${phoneIcons(x.phone)}${x.altPhone ? '<span class="mut">/</span><span dir="ltr">' + esc(x.altPhone) + '</span>' + phoneIcons(x.altPhone) : ''}</div></div></div>` +
+    `<div class="oc-row">${OI.pin}<div class="oc-v"><b>${esc(x.governorate)}</b> — ${esc(x.address)}</div></div>` +
+    `<div class="oc-row">${OI.box}<div class="oc-v"><table class="oc-t"><thead><tr><th>المنتج</th><th class="c">الكمية</th><th class="c">الإجمالي</th></tr></thead><tbody>${rows}</tbody></table></div></div>` +
+    (o.notes ? `<div class="warn" style="background:#f59e0b1a;border-color:#f59e0b66;color:#fcd34d"><b>ملاحظات:</b> ${esc(o.notes)}</div>` : '') +
+    (x.giftMessage ? `<div class="oc-row">${OI.note}<div class="oc-v"><b>رسالة الهدية:</b> ${esc(x.giftMessage)}</div></div>` : '') +
+    `<div class="oc-fin"><div class="g">الإجمالي<b>${money(total)} ج.م</b></div><div>المدفوع<b>${money(paid)}</b></div><div class="${rem ? 'r' : ''}">المتبقي<b>${money(rem)} ج.م</b></div><div>الدفع<b style="font-size:.74rem">${esc(PAY[p.method] || p.method)}${p.method !== 'cod' && p.transactionRef ? '<span class="mut" style="display:block;font-size:.65rem">' + esc(p.transactionRef) + '</span>' : ''}</b></div></div>` +
+    (tags.length ? `<div class="oc-tags">${tags.map(t => '<span>' + t + '</span>').join('')}</div>` : '') +
+    warn(o) +
+    (cur === ST[4] && !(Number(o.returnedQty) > 0) ? `<button type="button" class="oc-link" data-id="${id}" onclick="startRet(this.dataset.id)">سجّل تفاصيل المرتجع (الكميات · المخزون · المبلغ المسترد)</button>` : '') +
+    `<div class="oc-tb">${tb('printInv', OI.inv, 'فاتورة')}${tb('pngInv', OI.png, 'PNG')}${tb('oeOpen', OI.edit, 'تعديل')}${tb('printWaybill', OI.ship, 'بوليصة')}${tb('pdfInv', OI.pdf, 'PDF')}${tb('trashOrder', OI.del, 'حذف', 'd')}</div></div>`;
+}
+async function mailNoticeSave(on) {
+  const t = $('po-mn-t'); if (t) t.textContent = on ? 'التنبيه شغّال — ظاهر للعملاء' : 'التنبيه متوقف — مخفي عن العملاء';
+  try { await db.doc('settings/policies').set({ mailNotice: !!on }, { merge: true }); toast(on ? 'تم تشغيل تنبيه البريد في المتجر' : 'تم إيقاف تنبيه البريد — اختفى من المتجر'); }
+  catch (e) { toast('تعذّر الحفظ: ' + (e.code || '')); const c = $('po-mn'); if (c) c.checked = !on; }
+}
 
 </script>
 </body></html>
