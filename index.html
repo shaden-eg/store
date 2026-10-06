@@ -802,37 +802,39 @@ main h1,main h2,main h3,main p,main span{overflow-wrap:break-word}
 }
 /* ---- product cards on phones ---- */
 @media(max-width:639px){
-  .sh-slide{flex:0 0 min(56vw,222px)}
+  .sh-slide{flex:0 0 min(60vw,232px)}
   .sh-rail{gap:.7rem}
   main .sh-grid{gap:.7rem}
-  main .sh-grid .product-card{padding:.6rem!important;border-radius:1.1rem!important;height:100%;min-width:0;justify-content:flex-start;gap:0}
-  main .sh-grid .product-card>div:first-child{margin-bottom:.45rem!important;gap:.4rem;min-width:0}
-  main .sh-grid .product-card>div:first-child>span{min-width:0;max-width:calc(100% - 34px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9.5px!important;padding:.2rem .55rem!important}
-  main .sh-grid .product-card>div:first-child>button{flex:none;width:30px;height:30px;padding:0!important;display:flex;align-items:center;justify-content:center}
-  main .sh-grid .product-card>div:first-child>button svg,main .sh-grid .product-card>div:first-child>button i{width:15px!important;height:15px!important}
-  main .sh-grid .product-card>div:nth-child(2){margin-bottom:.55rem!important;border-radius:.9rem!important}
-  main .sh-grid .product-card>div:nth-child(3){flex:1 1 auto;display:flex;flex-direction:column;gap:.4rem;min-width:0}
-  main .sh-grid .product-card>div:nth-child(3).space-y-2>*+*{margin-top:0!important}
-  main .sh-grid .product-card h3{font-size:13px!important;line-height:1.45!important;font-weight:800}
-  main .sh-grid .product-card>div:nth-child(3)>div:first-child{gap:.35rem;min-width:0}
-  main .sh-grid .product-card>div:nth-child(3)>div:first-child>div{flex:none;font-size:11px!important}
-  main .sh-grid .product-card p{display:none!important}
-  main .sh-grid .product-card .pt-1{padding-top:.1rem!important;margin-top:auto}
-  main .sh-grid .product-card .pt-1>div:first-child{margin-bottom:.4rem!important}
-  main .sh-grid .product-card .pt-1>div:first-child>span:first-child{display:none}
-  main .sh-grid .product-card .pt-1>div:first-child>span:last-child{font-size:15px!important;line-height:1.2;margin-inline-start:0;width:100%;text-align:right}
-  main .sh-grid .product-card [id^="sizes-group-"]{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(2.9rem,1fr));gap:.3rem!important}
-  main .sh-grid .product-card .size-btn{min-height:28px;padding:0 .3rem!important;font-size:11px!important;line-height:1;display:flex;align-items:center;justify-content:center;white-space:nowrap}
-  main .sh-grid .product-card .grid.grid-cols-2{grid-template-columns:1fr!important;gap:.4rem!important;margin-top:.65rem!important}
-  main .sh-grid .product-card .grid.grid-cols-2 button{min-height:38px;width:100%;padding:.4rem .5rem!important;font-size:12px!important;line-height:1.2;border-radius:.8rem!important;gap:.35rem!important;white-space:normal;text-align:center}
-  main .sh-grid .product-card .grid.grid-cols-2 button svg,main .sh-grid .product-card .grid.grid-cols-2 button i{width:14px!important;height:14px!important;flex:none}
-  main .sh-grid .product-card .grid.grid-cols-2 button .ic{margin:0}
-  main .sh-grid .product-card .sh-soldbtn{font-size:11px!important}
+  main .product-card{padding:.6rem!important;border-radius:1.1rem!important;height:100%;min-width:0;justify-content:flex-start;gap:0}
+  main .product-card>div:first-child{margin-bottom:.45rem!important;gap:.4rem;min-width:0}
+  main .product-card>div:first-child>span{min-width:0;max-width:calc(100% - 34px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9.5px!important;padding:.2rem .55rem!important}
+  main .product-card>div:first-child>button{flex:none;width:30px;height:30px;padding:0!important;display:flex;align-items:center;justify-content:center}
+  main .product-card>div:first-child>button svg,main .product-card>div:first-child>button i{width:15px!important;height:15px!important}
+  main .product-card>div:nth-child(2){margin-bottom:.55rem!important;border-radius:.9rem!important}
+  main .product-card>div:nth-child(3){flex:1 1 auto;display:flex;flex-direction:column;gap:.4rem;min-width:0}
+  main .product-card>div:nth-child(3).space-y-2>*+*{margin-top:0!important}
+  main .product-card h3{font-size:13px!important;line-height:1.45!important;font-weight:800}
+  main .product-card>div:nth-child(3)>div:first-child{gap:.35rem;min-width:0}
+  main .product-card>div:nth-child(3)>div:first-child>div{flex:none;font-size:11px!important;white-space:nowrap;flex-direction:row;direction:ltr;gap:.15rem!important}
+  main .product-card>div:nth-child(3)>div:first-child>div span{white-space:nowrap;display:inline}
+  main .product-card h3{flex:1 1 auto;min-width:0}
+  main .product-card p{display:none!important}
+  main .product-card .pt-1{padding-top:.1rem!important;margin-top:auto}
+  main .product-card .pt-1>div:first-child{margin-bottom:.4rem!important}
+  main .product-card .pt-1>div:first-child>span:first-child{display:none}
+  main .product-card .pt-1>div:first-child>span:last-child{font-size:15px!important;line-height:1.2;margin-inline-start:0;width:100%;text-align:right}
+  main .product-card [id^="sizes-group-"]{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(2.9rem,1fr));gap:.3rem!important}
+  main .product-card .size-btn{min-height:28px;padding:0 .3rem!important;font-size:11px!important;line-height:1;display:flex;align-items:center;justify-content:center;white-space:nowrap}
+  main .product-card .grid.grid-cols-2{grid-template-columns:1fr!important;gap:.4rem!important;margin-top:.65rem!important}
+  main .product-card .grid.grid-cols-2 button{min-height:38px;width:100%;padding:.4rem .5rem!important;font-size:12px!important;line-height:1.2;border-radius:.8rem!important;gap:.35rem!important;white-space:normal;text-align:center}
+  main .product-card .grid.grid-cols-2 button svg,main .product-card .grid.grid-cols-2 button i{width:14px!important;height:14px!important;flex:none}
+  main .product-card .grid.grid-cols-2 button .ic{margin:0}
+  main .product-card .sh-soldbtn{font-size:11px!important}
 }
 @media(max-width:359px){
   .sh-slide{flex-basis:62vw}
-  main .sh-grid .product-card{padding:.5rem!important}
-  main .sh-grid .product-card h3{font-size:12px!important}
+  main .product-card{padding:.5rem!important}
+  main .product-card h3{font-size:12px!important}
 }
 /* ---- customer id ---- */
 .sh-cid-box{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.7rem .9rem;border-radius:1rem;border:1.5px solid rgba(229,192,123,.6);background:linear-gradient(135deg,rgba(229,192,123,.14),rgba(139,155,222,.12))}
