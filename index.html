@@ -18,7 +18,17 @@
   <meta property="og:title" content="شَـــادِن • صُنع للحظات المميزة">
   <meta property="og:description" content="شادن عطور: متجر عطور رجالي وحريمي وعطور مميزة بتصنع للحظاتك. اطلب عطرك أونلاين من شَادِن SHADEN بالدفع عند الاستلام أو فودافون كاش وإنستاباي، وتغليف هدايا فاخر وشحن لكل محافظات مصر.">
   <meta property="og:locale" content="ar_EG">
+  <meta property="og:url" content="https://shaden-eg.github.io/store/">
+  <meta property="og:image" content="https://shaden-eg.github.io/store/icon-512.png">
+  <meta property="og:image:secure_url" content="https://shaden-eg.github.io/store/icon-512.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta property="og:image:alt" content="شَـــادِن • صُنع للحظات المميزة">
   <meta name="twitter:card" content="summary">
+  <meta name="twitter:image" content="https://shaden-eg.github.io/store/icon-512.png">
+  <meta name="twitter:image:alt" content="شَـــادِن • صُنع للحظات المميزة">
+  <link rel="canonical" href="https://shaden-eg.github.io/store/">
   <meta name="twitter:title" content="شَـــادِن • صُنع للحظات المميزة">
   <meta name="twitter:description" content="شادن عطور: متجر عطور رجالي وحريمي وعطور مميزة بتصنع للحظاتك. اطلب عطرك أونلاين من شَادِن SHADEN بالدفع عند الاستلام أو فودافون كاش وإنستاباي، وتغليف هدايا فاخر وشحن لكل محافظات مصر.">
   <meta name="theme-color" content="#090D1A">
@@ -756,6 +766,83 @@ img,video,canvas{max-width:100%}
 .shc-no{border:1px solid #94a3b8;color:inherit;background:transparent}
 .shc-yes{background:#ef4444;color:#fff}
 
+</style>
+<style id="shaden-v13-style">
+/* ===== v13: mobile cards · no side clipping · touch sliders · customer id ===== */
+*,*::before,*::after{box-sizing:border-box}
+@supports not (overflow-x:clip){html,body{overflow-x:hidden}}
+main,footer{padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+main img,main video,main canvas,main svg{max-width:100%}
+main h1,main h2,main h3,main p,main span{overflow-wrap:break-word}
+.sh-grid>*,.sh-sec{min-width:0}
+.sh-sec{overflow:visible!important}
+/* rails bleed to the screen edge but keep content aligned with the page padding */
+.sh-rail{margin-inline:-1rem;padding:.8rem 1rem 1.1rem;scroll-padding-inline:1rem}
+@media(min-width:640px){.sh-rail{margin-inline:-1.5rem;padding-inline:1.5rem;scroll-padding-inline:1.5rem}}
+@media(min-width:1024px){.sh-rail{margin-inline:-2rem;padding-inline:2rem;scroll-padding-inline:2rem}}
+.sh-slide{display:flex;min-width:0}
+.sh-slide>.product-card{width:100%;min-width:0}
+/* header: never wider than the screen */
+@media(max-width:767px){
+  #main-header .sh-logo-link{min-width:0;flex:1 1 auto;overflow:hidden;gap:.45rem}
+  #main-header .sh-logo-link>div{min-width:0}
+  #main-header .mh-tag{overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  #main-header .sh-logo-link ~ div:last-of-type{flex:none;gap:.3rem;margin-inline-start:.4rem}
+}
+/* touch sliders */
+.sh-co,.sh-gl{touch-action:pan-y;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+.co-card,.gl-card{will-change:transform,opacity;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.sh-co *,.sh-gl *{-webkit-user-drag:none;-webkit-touch-callout:none}
+@media(max-width:639px){.sh-gl{overflow:visible}}
+/* tap devices: no sticky hover states on cards */
+@media(hover:none){
+  .product-card:hover{transform:none!important}
+  .product-card:hover img{transform:none!important}
+  .product-card .bg-black\/40{display:none!important}
+}
+/* ---- product cards on phones ---- */
+@media(max-width:639px){
+  .sh-slide{flex:0 0 min(56vw,222px)}
+  .sh-rail{gap:.7rem}
+  main .sh-grid{gap:.7rem}
+  main .sh-grid .product-card{padding:.6rem!important;border-radius:1.1rem!important;height:100%;min-width:0;justify-content:flex-start;gap:0}
+  main .sh-grid .product-card>div:first-child{margin-bottom:.45rem!important;gap:.4rem;min-width:0}
+  main .sh-grid .product-card>div:first-child>span{min-width:0;max-width:calc(100% - 34px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9.5px!important;padding:.2rem .55rem!important}
+  main .sh-grid .product-card>div:first-child>button{flex:none;width:30px;height:30px;padding:0!important;display:flex;align-items:center;justify-content:center}
+  main .sh-grid .product-card>div:first-child>button svg,main .sh-grid .product-card>div:first-child>button i{width:15px!important;height:15px!important}
+  main .sh-grid .product-card>div:nth-child(2){margin-bottom:.55rem!important;border-radius:.9rem!important}
+  main .sh-grid .product-card>div:nth-child(3){flex:1 1 auto;display:flex;flex-direction:column;gap:.4rem;min-width:0}
+  main .sh-grid .product-card>div:nth-child(3).space-y-2>*+*{margin-top:0!important}
+  main .sh-grid .product-card h3{font-size:13px!important;line-height:1.45!important;font-weight:800}
+  main .sh-grid .product-card>div:nth-child(3)>div:first-child{gap:.35rem;min-width:0}
+  main .sh-grid .product-card>div:nth-child(3)>div:first-child>div{flex:none;font-size:11px!important}
+  main .sh-grid .product-card p{display:none!important}
+  main .sh-grid .product-card .pt-1{padding-top:.1rem!important;margin-top:auto}
+  main .sh-grid .product-card .pt-1>div:first-child{margin-bottom:.4rem!important}
+  main .sh-grid .product-card .pt-1>div:first-child>span:first-child{display:none}
+  main .sh-grid .product-card .pt-1>div:first-child>span:last-child{font-size:15px!important;line-height:1.2;margin-inline-start:0;width:100%;text-align:right}
+  main .sh-grid .product-card [id^="sizes-group-"]{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(2.9rem,1fr));gap:.3rem!important}
+  main .sh-grid .product-card .size-btn{min-height:28px;padding:0 .3rem!important;font-size:11px!important;line-height:1;display:flex;align-items:center;justify-content:center;white-space:nowrap}
+  main .sh-grid .product-card .grid.grid-cols-2{grid-template-columns:1fr!important;gap:.4rem!important;margin-top:.65rem!important}
+  main .sh-grid .product-card .grid.grid-cols-2 button{min-height:38px;width:100%;padding:.4rem .5rem!important;font-size:12px!important;line-height:1.2;border-radius:.8rem!important;gap:.35rem!important;white-space:normal;text-align:center}
+  main .sh-grid .product-card .grid.grid-cols-2 button svg,main .sh-grid .product-card .grid.grid-cols-2 button i{width:14px!important;height:14px!important;flex:none}
+  main .sh-grid .product-card .grid.grid-cols-2 button .ic{margin:0}
+  main .sh-grid .product-card .sh-soldbtn{font-size:11px!important}
+}
+@media(max-width:359px){
+  .sh-slide{flex-basis:62vw}
+  main .sh-grid .product-card{padding:.5rem!important}
+  main .sh-grid .product-card h3{font-size:12px!important}
+}
+/* ---- customer id ---- */
+.sh-cid-box{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.7rem .9rem;border-radius:1rem;border:1.5px solid rgba(229,192,123,.6);background:linear-gradient(135deg,rgba(229,192,123,.14),rgba(139,155,222,.12))}
+.sh-cid-txt{display:flex;flex-direction:column;gap:.15rem;min-width:0;text-align:right}
+.sh-cid-l{font-size:10.5px;font-weight:700;color:#b58a2f}
+.dark .sh-cid-l{color:#E5C07B}
+.sh-cid-box b{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:1.15rem;letter-spacing:.12em;color:#1e1b4b;overflow-wrap:anywhere}
+.dark .sh-cid-box b{color:#fff}
+.sh-cid-copy{flex:none;padding:.45rem .95rem;border-radius:.7rem;background:#4F46E5;color:#fff;font-weight:800;font-size:12px}
+.sh-cid-copy:active{transform:scale(.96)}
 </style>
 </head>
 
@@ -1699,6 +1786,12 @@ img,video,canvas{max-width:100%}
             <button onclick="app.signOut()" class="p-2 rounded-lg text-brand-rose hover:bg-brand-rose/10" title="تسجيل الخروج">
               <i data-lucide="log-out" class="w-4 h-4"></i>
             </button>
+          </div>
+
+          <!-- Customer ID -->
+          <div id="sh-cid-box" class="sh-cid-box" style="display:none">
+            <div class="sh-cid-txt"><span class="sh-cid-l">معرّف العميل (Customer ID)</span><b id="sh-cid-v" dir="ltr">CU-------</b></div>
+            <button type="button" id="sh-cid-copy" class="sh-cid-copy" onclick="ShCID.copy()" aria-label="نسخ معرّف العميل">نسخ</button>
           </div>
 
           <details id="auth-setup" class="rounded-2xl border border-brand-gold/40 bg-brand-gold/5 p-3" open>
@@ -4045,29 +4138,64 @@ ${paymentSection}
       clearInterval(S.timer);
       if (S.n > 1) S.timer = setInterval(() => { if (!S.drag && S.vis && !document.hidden && Date.now() > S.hold && !S.raf) S.go(1); }, ms || 3200);
     };
+    S.sched = () => { if (S.rq) return; S.rq = requestAnimationFrame(() => { S.rq = 0; S.render(); }); };
     S.bind = (el) => {
       if (S.bound && S.el === el) return; S.bound = true; S.el = el;
+      const unit = () => Math.max(60, cfg.unit());
+      const begin = (x, y) => {
+        S.stop(); S.drag = true; S.moved = false; S.dec = 0; S.x0 = x; S.y0 = y; S.p0 = S.pos;
+        S.lx = x; S.lt = performance.now(); S.v = 0; S.hold = Date.now() + 6000;
+      };
+      const move = (x, y, ev, isTouch) => {
+        if (!S.drag) return;
+        const dx = x - S.x0, dy = y - S.y0;
+        if (!S.dec) {
+          if (Math.abs(dx) < 4 && Math.abs(dy) < 4) return;
+          if (isTouch && Math.abs(dy) > Math.abs(dx) * 1.15) { S.drag = false; S.tween(Math.round(S.pos), 260); return; } /* vertical scroll wins */
+          S.dec = 1; S.moved = true; el.classList.add('dragging');
+        }
+        if (ev && ev.cancelable) ev.preventDefault();
+        const now = performance.now(), dt = Math.max(1, now - S.lt);
+        S.v = 0.7 * S.v + 0.3 * ((x - S.lx) / dt); S.lx = x; S.lt = now;
+        S.pos = S.p0 - dx / unit(); S.sched();
+      };
+      const end = () => {
+        if (!S.drag) return; S.drag = false; el.classList.remove('dragging');
+        S.hold = Date.now() + 4500;
+        if (S.rq) { cancelAnimationFrame(S.rq); S.rq = 0; }
+        if (!S.moved) { if (Math.abs(S.pos - Math.round(S.pos)) > .001) S.tween(Math.round(S.pos), 300); return; }
+        const base = Math.round(S.p0);
+        let t = Math.round(S.pos - (S.v * 150) / unit());
+        if (t === base && Math.abs(S.pos - S.p0) > .16) t = base + (S.pos > S.p0 ? 1 : -1);
+        S.tween(Math.max(base - 2, Math.min(base + 2, t)), 460);
+        S.swallow = Date.now() + 280;
+      };
+      /* touch: explicit handlers, direction-locked, finger follows 1:1 */
+      el.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 1) { if (S.drag) { S.drag = false; el.classList.remove('dragging'); S.tween(Math.round(S.pos), 260); } return; }
+        const t = e.touches[0]; begin(t.clientX, t.clientY); S.isTouch = true;
+      }, { passive: true });
+      el.addEventListener('touchmove', (e) => {
+        if (!S.drag || e.touches.length > 1) return;
+        const t = e.touches[0]; move(t.clientX, t.clientY, e, true);
+      }, { passive: false });
+      ['touchend', 'touchcancel'].forEach((ev) => el.addEventListener(ev, end, { passive: true }));
+      /* mouse / pen: pointer events with capture */
       let id = null;
       el.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'touch') return;
         if (e.pointerType === 'mouse' && e.button !== 0) return;
-        S.stop(); S.drag = true; S.moved = false; S.x0 = e.clientX; S.p0 = S.pos; S.lx = e.clientX; S.lt = performance.now(); S.v = 0; id = e.pointerId; S.hold = Date.now() + 6000;
+        begin(e.clientX, e.clientY); id = e.pointerId; S.isTouch = false;
       });
       el.addEventListener('pointermove', (e) => {
-        if (!S.drag || e.pointerId !== id) return;
-        const dx = e.clientX - S.x0;
-        if (!S.moved) { if (Math.abs(dx) < 6) return; S.moved = true; el.classList.add('dragging'); try { el.setPointerCapture(id); } catch (x) {} }
-        const now = performance.now(), dt = Math.max(1, now - S.lt); S.v = 0.8 * S.v + 0.2 * ((e.clientX - S.lx) / dt); S.lx = e.clientX; S.lt = now;
-        S.pos = S.p0 - dx / cfg.unit(); S.render();
+        if (e.pointerType === 'touch' || !S.drag || e.pointerId !== id) return;
+        const was = S.moved; move(e.clientX, e.clientY, e, false);
+        if (S.moved && !was) { try { el.setPointerCapture(id); } catch (x) {} }
       });
-      const end = (e) => {
-        if (!S.drag) return; S.drag = false; el.classList.remove('dragging'); try { el.releasePointerCapture(id); } catch (x) {}
-        S.hold = Date.now() + 4500;
-        if (!S.moved) return;
-        const t = Math.round(S.pos - (S.v * 240) / cfg.unit());
-        S.tween(Math.max(Math.round(S.p0) - 2, Math.min(Math.round(S.p0) + 2, t)), 480);
-        S.swallow = Date.now() + 250;
-      };
-      ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((ev) => el.addEventListener(ev, end));
+      ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((ev) => el.addEventListener(ev, (e) => {
+        if (e.pointerType === 'touch') return;
+        try { el.releasePointerCapture(id); } catch (x) {} end();
+      }));
       el.addEventListener('click', (e) => {
         if (S.swallow && Date.now() < S.swallow) { e.preventDefault(); e.stopPropagation(); return; }
         const c = e.target.closest(cfg.sel); if (c) { const k = S.cards.indexOf(c); if (k >= 0 && Math.abs(wrap(k - S.pos)) > .5) { S.hold = Date.now() + 5000; S.to(k); } }
@@ -4940,6 +5068,36 @@ ${paymentSection}
   hookAcc();
 })();
 
+</script>
+
+<script id="shaden-cid">
+(function(){
+  /* same formula the admin panel uses: CU- + first 6 chars of the account uid */
+  function cid(u){ return u && u.uid ? 'CU-' + String(u.uid).slice(0, 6).toUpperCase() : ''; }
+  function paint(u){
+    var v = document.getElementById('sh-cid-v'), b = document.getElementById('sh-cid-box');
+    if (!v || !b) return;
+    var c = cid(u); v.textContent = c || 'CU-------'; b.style.display = c ? '' : 'none';
+  }
+  function say(t){ try { if (window.app && app.showToast) return app.showToast(t); } catch (e) {} }
+  window.ShCID = {
+    get: function(){ try { return cid(firebase.auth().currentUser); } catch (e) { return ''; } },
+    copy: function(){
+      var c = this.get(); if (!c) return;
+      var done = function(){ say('تم نسخ معرّف العميل ' + c); var b = document.getElementById('sh-cid-copy'); if (b) { b.textContent = 'تم ✓'; setTimeout(function(){ b.textContent = 'نسخ'; }, 1600); } };
+      if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(c).then(done, fallback); } else fallback();
+      function fallback(){ try { var t = document.createElement('textarea'); t.value = c; t.setAttribute('readonly', ''); t.style.cssText = 'position:fixed;top:-999px;opacity:0'; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); done(); } catch (e) {} }
+    }
+  };
+  function hook(){
+    if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length) return setTimeout(hook, 400);
+    var au = firebase.auth();
+    au.onAuthStateChanged(paint); paint(au.currentUser);
+    var m = document.getElementById('auth-modal');
+    if (m && window.MutationObserver) new MutationObserver(function(){ paint(au.currentUser); }).observe(m, { attributes: true, attributeFilter: ['class'] });
+  }
+  hook();
+})();
 </script>
 <script id="shaden-seo">
 (function(){
