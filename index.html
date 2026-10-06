@@ -846,6 +846,26 @@ main h1,main h2,main h3,main p,main span{overflow-wrap:break-word}
 .sh-cid-copy{flex:none;padding:.45rem .95rem;border-radius:.7rem;background:#4F46E5;color:#fff;font-weight:800;font-size:12px}
 .sh-cid-copy:active{transform:scale(.96)}
 </style>
+<style id="shaden-v14-style">
+/* ===== v14: mail notice ===== */
+.sh-mailnote{display:flex;align-items:flex-start;gap:.65rem;margin:.9rem auto 0;max-width:36rem;padding:.7rem .9rem;border-radius:1rem;text-align:right;direction:rtl;border:1.5px solid rgba(229,192,123,.7);background:linear-gradient(135deg,rgba(229,192,123,.17),rgba(79,70,229,.12));box-shadow:0 0 0 3px rgba(229,192,123,.07)}
+.sh-mailnote .mn-i{flex:none;width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(229,192,123,.25);color:#a97a1c}
+.dark .sh-mailnote .mn-i{color:#E5C07B}
+.sh-mailnote b{display:block;font-size:.8rem;font-weight:800;color:#a97a1c;margin-bottom:.1rem}
+.dark .sh-mailnote b{color:#E5C07B}
+.sh-mailnote .mn-t{display:block;font-size:.72rem;line-height:1.75;color:#475569}
+.dark .sh-mailnote .mn-t{color:#cbd5e1}
+.sh-mailnote em{font-style:normal;font-weight:800;color:#d97706;white-space:nowrap}
+.sh-mailnote.mn-foot{margin-top:0}
+.sh-nomail .sh-mailnote{display:none!important}
+/* ===== v14: PWA login hint ===== */
+.sh-pwa-login{position:fixed;left:.75rem;right:.75rem;bottom:calc(.75rem + env(safe-area-inset-bottom,0px));z-index:120;display:none;align-items:center;gap:.6rem;padding:.7rem .9rem;border-radius:1rem;background:#141A3A;color:#e2e8f0;border:1px solid rgba(139,155,222,.5);box-shadow:0 10px 30px rgba(0,0,0,.45);font-size:.75rem;line-height:1.6;direction:rtl}
+.sh-pwa-login.on{display:flex}
+.sh-pwa-login button{flex:none;border-radius:.7rem;padding:.4rem .8rem;font-weight:800;font-size:.75rem}
+.sh-pwa-login .go{background:#4F46E5;color:#fff}
+.sh-pwa-login .x{background:transparent;color:#94a3b8;padding:.2rem .4rem}
+</style>
+<script>try{if(localStorage.getItem("sh_nomail")==="1")document.documentElement.classList.add("sh-nomail")}catch(e){}</script>
 </head>
 
 <body class="bg-slate-50 dark:bg-brand-dark text-slate-800 dark:text-slate-100 min-h-screen relative antialiased selection:bg-brand-lavender selection:text-brand-dark">
@@ -1281,6 +1301,7 @@ main h1,main h2,main h3,main p,main span{overflow-wrap:break-word}
       </div>
     </div>
 
+    <div class="max-w-7xl mx-auto px-1 pb-5"><div class="sh-mailnote mn-foot" role="note"><span class="mn-i"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span><div><b>تابع بريدك الإلكتروني</b><span class="mn-t">هيوصلك إشعار بحالة طلبك على بريدك الإلكتروني. لو ما لقيتهوش في الوارد، افتح مجلد <em>الرسائل غير المرغوب فيها (Spam)</em> واختر «ليست رسالة غير مرغوب فيها».</span></div></div></div>
     <!-- Copyright & Slogan Bar -->
     <div class="max-w-7xl mx-auto pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between text-center text-xs text-slate-500 gap-3">
       <p>جميع الحقوق محفوظة لـ شَـــادِن (SHADEN) - صُنع للحظات المميزة © 2026</p>
@@ -1715,6 +1736,7 @@ main h1,main h2,main h3,main p,main span{overflow-wrap:break-word}
           فريق خدمة العملاء هيتواصل معاك لتأكيد الشحن وموعد الوصول.
         </p>
         <div id="cel-summary" class="mt-3"></div>
+        <div class="sh-mailnote mn-inv" role="note"><span class="mn-i"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span><div><b>تنبيه مهم بخصوص البريد</b><span class="mn-t">فاتورة طلبك وتحديثات حالته بتوصلك على بريدك الإلكتروني. لو ما ظهرتش في الوارد، راجع مجلد <em>الرسائل غير المرغوب فيها (Spam)</em> واختر «ليست رسالة غير مرغوب فيها».</span></div></div>
 
         <div class="mt-6 flex flex-col sm:flex-row gap-3">
           <button id="whatsapp-redirect-btn" class="flex-1 py-3 rounded-xl bg-brand-emerald text-white text-xs font-bold hover:brightness-110 flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
@@ -3359,6 +3381,11 @@ ${paymentSection}
           await auth.signInWithPopup(provider);
           this.showToast("تم تسجيل الدخول بحساب Google");
         } catch(e) {
+          const c = e && e.code;
+          if (c === 'auth/popup-blocked' || c === 'auth/operation-not-supported-in-this-environment' || c === 'auth/web-storage-unsupported') {
+            try { await auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider()); return; } catch (x) {}
+          }
+          if (c === 'auth/popup-closed-by-user' || c === 'auth/cancelled-popup-request') return;
           this.showToast("تعذر الدخول بجوجل في هذا المتصفح");
         }
       }
@@ -3545,6 +3572,7 @@ ${paymentSection}
       <button onclick="ShadenV2.closeOrders()" class="absolute top-4 left-4 z-30 p-2 rounded-full bg-slate-200/90 dark:bg-white/10 hover:bg-slate-300 dark:hover:bg-brand-elevatedDark text-slate-700 dark:text-slate-100 w-9 h-9 flex items-center justify-center" aria-label="إغلاق"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <h3 class="font-ruqaa text-2xl font-bold text-brand-gold mb-1 leading-relaxed">طلباتي</h3>
       <p class="text-[11px] text-slate-500 mb-3">حالة أوردرك بتتحدث لحظياً من غير ما تعمل ريفريش.</p>
+      <div class="sh-mailnote mn-st mb-3" role="note"><span class="mn-i"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span><div><b>إشعارات طلبك على البريد</b><span class="mn-t">هنبعتلك تحديثات الحالة على بريدك. لو ما وصلتش، راجع مجلد <em>الرسائل غير المرغوب فيها (Spam)</em> واختر «ليست رسالة غير مرغوب فيها».</span></div></div>
       <div id="my-orders-live" class="space-y-3 max-h-[60vh] overflow-y-auto pr-1"></div>
     </div>
 </div>
@@ -3773,36 +3801,14 @@ ${paymentSection}
   }
   window.shBottle = shBottle;
   const SH_PLACEHOLDER = /placehold\.co|placeholder|dummyimage|picsum|lorempixel|fakeimg|via\.placeholder/i;
-  /* real studio photos (Unsplash, free licence) used only for demo/test products that have no real image */
-  const SH_PHOTOS = {
-    black:   ['1584841247175-4d766cefa018', '1585218334450-afcf929da36e', '1594035910387-fea47794261f', '1760920250029-36af9369a0bb'],
-    gold:    ['1588405748880-12d1d2a59f75', '1584841247175-4d766cefa018', '1594035910387-fea47794261f'],
-    pink:    ['1595425959632-34f2822322ce', '1613521140785-e85e427f8002'],
-    blue:    ['1615160460366-2c9a41771b51', '1615634260167-c8cdede054de'],
-    white:   ['1615108395437-df128ad79e80', '1733660227163-01bc46e0d7d7', '1594125311687-3b1b3eafa9f4'],
-    red:     ['1608528577891-eb055944f2e7'],
-    any:     ['1458538977777-0549b2370168', '1543422655-ac1c6ca993ed', '1672848700906-2b8ca62639e4', '1615634260167-c8cdede054de', '1594125311687-3b1b3eafa9f4', '1588405748880-12d1d2a59f75', '1585218334450-afcf929da36e', '1595425959632-34f2822322ce']
-  };
-  const SH_PHOTO_URL = (id) => 'https://images.unsplash.com/photo-' + id + '?auto=format&fit=crop&w=800&h=800&q=72';
-  function shPhotoFor(p) {
-    const n = String(p.name || p.id || '').toLowerCase(), h = shHash(n + '|' + (p.id || ''));
-    let g = SH_PHOTOS.any;
-    if (/black|blk|noir|dark|اسود|أسود|بلاك/.test(n)) g = SH_PHOTOS.black;
-    else if (/rose|pink|flower|ورد|زهر|وردي/.test(n)) g = SH_PHOTOS.pink;
-    else if (/blue|ocean|sea|aqua|ازرق|أزرق|بحر/.test(n)) g = SH_PHOTOS.blue;
-    else if (/white|pearl|ice|snow|ابيض|أبيض|وايت/.test(n)) g = SH_PHOTOS.white;
-    else if (/oud|amber|gold|عود|عنبر|ذهب/.test(n)) g = SH_PHOTOS.gold;
-    else if (/red|crimson|love|احمر|أحمر/.test(n)) g = SH_PHOTOS.red;
-    return SH_PHOTO_URL(g[h % g.length]);
-  }
-  /* if a photo can't load, fall back to the drawn bottle (any <img> using it) */
+  /* if a product photo link is broken, fall back to the drawn bottle (any <img> using it) */
   document.addEventListener('error', function (e) {
     const t = e.target;
-    if (t && t.tagName === 'IMG' && /images\.unsplash\.com/.test(t.currentSrc || t.src) && !t.__shf) { t.__shf = 1; t.src = shBottle(t.alt || t.src); }
+    if (t && t.tagName === 'IMG' && t.closest && t.closest('.product-card,#product-detail-modal,#cart-items,.sh-slide') && !/^data:/.test(t.currentSrc || t.src) && !t.__shf) { t.__shf = 1; t.src = shBottle(t.alt || t.src); }
   }, true);
   function shImageFor(p) {
     const im = String(p.image || '').trim();
-    if (!im || im === PH || SH_PLACEHOLDER.test(im)) return shPhotoFor(p);
+    if (!im || im === PH || SH_PLACEHOLDER.test(im)) return shBottle(p.name || p.id);
     return im;
   }
   function normProduct(x, id) {
@@ -5159,6 +5165,58 @@ ${paymentSection}
 
 </script>
 
+<script id="shaden-session">
+(function(){
+  /* mail notice flag from admin switch (settings/policies.mailNotice) */
+  function setMail(p){
+    var off = !!p && p.mailNotice === false;
+    document.documentElement.classList.toggle('sh-nomail', off);
+    try { localStorage.setItem('sh_nomail', off ? '1' : '0'); } catch (e) {}
+  }
+  var prev = window.__shPol;
+  window.__shPol = function(p){ try { prev && prev(p); } catch (e) {} setMail(p || {}); };
+
+  /* durable session shared by browser + installed app */
+  function hook(){
+    if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length) return setTimeout(hook, 300);
+    var au = firebase.auth();
+    try { au.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(){}); } catch (e) {}
+    try { au.getRedirectResult().then(function(r){ if (r && r.user) { try { app.showToast('تم تسجيل الدخول بحساب Google'); } catch (e) {} } }).catch(function(){}); } catch (e) {}
+    var last = 0;
+    function sync(){
+      var u = au.currentUser, now = Date.now();
+      if (!u || now - last < 20000) return; last = now;
+      u.reload().then(function(){ return u.getIdToken(true); }).catch(function(){});
+    }
+    ['visibilitychange', 'focus', 'pageshow', 'online'].forEach(function(ev){
+      (ev === 'visibilitychange' ? document : window).addEventListener(ev, function(){ if (ev !== 'visibilitychange' || !document.hidden) sync(); });
+    });
+    /* installed app with no session (e.g. iPhone keeps the app's storage separate from Safari): one gentle hint */
+    var standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone;
+    if (!standalone) return;
+    var seen = false;
+    au.onAuthStateChanged(function(u){
+      if (u) { try { localStorage.setItem('sh_pwa_hint', String(Date.now() + 365 * 864e5)); } catch (e) {} var b0 = document.getElementById('sh-pwa-login'); if (b0) b0.classList.remove('on'); return; }
+      if (seen) return; seen = true;
+      var until = 0; try { until = Number(localStorage.getItem('sh_pwa_hint')) || 0; } catch (e) {}
+      if (Date.now() < until) return;
+      setTimeout(function(){
+        if (au.currentUser) return;
+        var b = document.getElementById('sh-pwa-login');
+        if (!b) {
+          b = document.createElement('div'); b.id = 'sh-pwa-login'; b.className = 'sh-pwa-login';
+          b.innerHTML = '<span style="flex:1">سجّل دخولك مرة واحدة هنا وهتفضل مسجّل دخول وطلباتك متزامنة مع المتصفح.</span><button class="go" type="button">دخول</button><button class="x" type="button" aria-label="إغلاق">✕</button>';
+          document.body.appendChild(b);
+          b.querySelector('.go').onclick = function(){ b.classList.remove('on'); try { app.openAuthModal(); } catch (e) {} };
+          b.querySelector('.x').onclick = function(){ b.classList.remove('on'); try { localStorage.setItem('sh_pwa_hint', String(Date.now() + 14 * 864e5)); } catch (e) {} };
+        }
+        b.classList.add('on');
+      }, 2500);
+    });
+  }
+  hook();
+})();
+</script>
 <script id="shaden-cid">
 (function(){
   /* same formula the admin panel uses: CU- + first 6 chars of the account uid */
