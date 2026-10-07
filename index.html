@@ -4627,10 +4627,45 @@ ${paymentSection}
       } catch (e) {}
     }
     var _bu = null;
+    function blkUI(on) {
+      var bar = document.getElementById('sh-blk');
+      if (!on) { if (bar) bar.remove(); return; }
+      if (bar) return;
+      bar = document.createElement('div'); bar.id = 'sh-blk';
+      bar.setAttribute('style', 'position:fixed;top:0;left:0;right:0;z-index:99998;background:#b91c1c;color:#fff;text-align:center;padding:.55rem 1rem;font-size:.85rem;font-weight:700;line-height:1.6;box-shadow:0 2px 10px #0006');
+      bar.textContent = 'حسابك معطّل من قبل الإدارة — لا يمكنك إنشاء طلبات حتى يتم تفعيله';
+      document.body.appendChild(bar);
+    }
+    function blkModal() {
+      if (document.getElementById('sh-blk-m')) return;
+      var m = document.createElement('div'); m.id = 'sh-blk-m';
+      m.setAttribute('style', 'position:fixed;inset:0;z-index:99999;background:#000a;display:flex;align-items:center;justify-content:center;padding:1.2rem');
+      m.innerHTML = '<div dir="rtl" style="background:#fff;color:#111;border-radius:1.2rem;max-width:22rem;width:100%;padding:1.6rem 1.4rem;text-align:center;box-shadow:0 20px 60px #0008"><div style="font-size:2.2rem;margin-bottom:.4rem">⛔</div><div style="font-weight:800;font-size:1.1rem;margin-bottom:.5rem">حسابك معطّل</div><p style="font-size:.9rem;line-height:1.9;color:#444;margin:0 0 1.1rem">حسابك معطّل من قبل الإدارة، ولا يمكنك إنشاء طلبات جديدة حتى يتم تفعيله.</p><button type="button" style="background:#4F46E5;color:#fff;border:0;border-radius:.8rem;padding:.6rem 1.8rem;font-weight:700;cursor:pointer">حسنًا</button></div>';
+      m.querySelector('button').onclick = function () { m.remove(); };
+      document.body.appendChild(m);
+    }
+    app.__blocked = false;
+    var _pcB = app.processCheckout;
+    app.processCheckout = function (e) {
+      if (app.__blocked) { try { if (e && e.preventDefault) e.preventDefault(); } catch (x) {} blkModal(); return false; }
+      return _pcB.apply(this, arguments);
+    };
     auth.onAuthStateChanged(function (u) {
-      if (_bu) { _bu(); _bu = null; } if (!u) return;
+      if (_bu) { _bu(); _bu = null; } app.__blocked = false; blkUI(false);
+      if (!u) return;
+      var key = 'sh_blk_' + u.uid;
       _bu = db.doc('blocked/' + u.uid).onSnapshot(function (d) {
-        if (d.exists) { try { app.showToast(d.data().reason === 'deleted' ? 'تم حذف هذا الحساب من الإدارة' : 'تم إيقاف هذا الحساب من الإدارة'); } catch (e) {} auth.signOut(); }
+        if (d.exists && d.data().reason === 'deleted') { try { app.showToast('تم حذف هذا الحساب من الإدارة'); } catch (e) {} auth.signOut(); return; }
+        if (d.exists) {
+          var first = !app.__blocked; app.__blocked = true; blkUI(true);
+          try { localStorage.setItem(key, '1'); } catch (e) {}
+          if (first) blkModal();
+        } else {
+          var was = false; try { was = localStorage.getItem(key) === '1'; localStorage.removeItem(key); } catch (e) {}
+          app.__blocked = false; blkUI(false);
+          var mm = document.getElementById('sh-blk-m'); if (mm) mm.remove();
+          if (was) { try { app.showToast('تم تفعيل حسابك بنجاح بواسطة الإدارة'); } catch (e) {} }
+        }
       }, function () {});
     });
     db.collection('bundles').onSnapshot(function (sn) { bundles = []; sn.forEach(function (d) { bundles.push(Object.assign({ id: d.id }, d.data())); }); reprice(); }, function () {});
