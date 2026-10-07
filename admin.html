@@ -450,6 +450,21 @@ main .row.n>*{flex:1 1 0;min-width:0;white-space:nowrap;text-align:center}
 #mbn .row.n .btn,#mgl .row.n .btn{display:flex;align-items:center;justify-content:center;gap:.3rem;padding:.5rem .3rem;font-size:.78rem;white-space:nowrap;min-height:38px;line-height:1}
 #mbn .row.n .btn .ic,#mgl .row.n .btn .ic{width:1rem;height:1rem;margin:0}
 @media(min-width:760px){#mbn .row.n,#mgl .row.n{flex:0 0 380px;width:380px;margin-inline-start:auto}}
+
+.mrow{display:grid;grid-template-columns:auto 1fr;gap:.7rem;align-items:center;margin:.7rem 0;padding:.7rem;border:1px solid var(--ln);border-radius:14px;background:var(--sec)}
+.mrow.off{opacity:.55}
+.mrow .mi{border-radius:12px;object-fit:cover;background:#0b1220;display:block}
+.mrow .mi.bn{width:min(190px,44vw);aspect-ratio:1100/407}
+.mrow .mi.gl{width:92px;height:92px}
+.mrow .mt{color:var(--mut);font-size:.85rem}
+.mrow .mc{margin:0;min-width:0}
+.mact2{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr 1.5fr 1.4fr;gap:.45rem}
+.mb{display:flex;align-items:center;justify-content:center;gap:.3rem;min-height:38px;padding:.4rem .3rem;border-radius:99px;background:#1f2937;border:1px solid var(--ln);color:#fff;font-size:.78rem;font-weight:700;white-space:nowrap;line-height:1}
+.mb .ic{width:1rem;height:1rem;margin:0}
+.mb.on{background:var(--deep);border-color:transparent}
+.mb.del{background:#7f1d1d;border-color:#b91c1c;color:#fecaca}
+.mb:disabled{opacity:.35;pointer-events:none}
+@media(min-width:760px){.mrow{grid-template-columns:auto 1fr 400px}.mact2{grid-column:auto}}
 </style>
 </head><body>
 <div id="gate" class="gate"><div><h1>شَادِن</h1><p class="mut" style="margin:.5rem 0 1rem">لوحة التحكم — للإدارة فقط</p><button class="btn" onclick="login()">الدخول بحساب جوجل</button><p id="gmsg" class="warn" style="display:none;margin-top:1rem"></p></div></div>
@@ -1704,6 +1719,21 @@ polView=function(){
 shRows=function(){
   const el=$('shl');if(!el)return;
   el.innerHTML='<div class="shh"><span>المحافظة</span><span>السعر (ج.م)</span><span></span></div>'+S.shipEdit.map((g,i)=>`<div class="shr"><input class="field" placeholder="اسم المحافظة" value="${esc(g.name)}" oninput="S.dirty=true;S.shipEdit[${i}].name=this.value"><input class="field" type="number" min="0" inputmode="numeric" value="${esc(g.rate)}" oninput="S.dirty=true;S.shipEdit[${i}].rate=+this.value"><button type="button" class="xs xw" aria-label="حذف" onclick="S.dirty=true;S.shipEdit.splice(${i},1);shRows()">${OI.del}<span>حذف</span></button></div>`).join('');
+};
+/* ---------- media rows (banners + gallery): own markup so buttons never crowd ---------- */
+const EYE=OIC('<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>');
+const EYEX=OIC('<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>');
+const mAct=(col,x,i,len)=>`<div class="mact2"><button type="button" class="mb" ${i?'':'disabled'} data-id="${esc(x._id)}" onclick="mvMedia('${col}',this.dataset.id,-1)" aria-label="أعلى">▲</button><button type="button" class="mb" ${i<len-1?'':'disabled'} data-id="${esc(x._id)}" onclick="mvMedia('${col}',this.dataset.id,1)" aria-label="أسفل">▼</button><button type="button" class="mb ${x.hidden?'on':''}" data-id="${esc(x._id)}" onclick="hideMedia('${col}',this.dataset.id)">${x.hidden?EYE+'<span>إظهار</span>':EYEX+'<span>إخفاء</span>'}</button><button type="button" class="mb del" data-id="${esc(x._id)}" onclick="delMedia('${col}',this.dataset.id)">${OI.del}<span>حذف</span></button></div>`;
+mediaFill=function(){
+  const b=$('mbn'),g=$('mgl');if(!b||!g)return;
+  const bl=S.bnr.slice().sort(byOrder),legacy=bnSlides();
+  b.innerHTML=(bl.map((x,i)=>`<div class="mrow ${x.hidden?'off':''}"><img class="mi bn" src="${esc(x.url)}" alt=""><span class="mt">بنر ${i+1}${x.hidden?' • مخفي':''}</span>${mAct('banners',x,i,bl.length)}</div>`).join('')||'<p class="mut">مفيش بنرات مضافة — بيظهر البنر الافتراضي.</p>')
+   +(legacy.length&&!bl.length?`<div class="warn" style="background:#f59e0b1a;border-color:#f59e0b66;color:#fcd34d">فيه ${legacy.length} بنر قديم من النظام السابق. <button class="btn s" onclick="bnMigrate()">نقلهم للنظام الجديد</button></div>`:'');
+  if(!g.contains(document.activeElement)||document.activeElement.tagName!=='INPUT'){
+    const gl=S.gal.slice().sort(byOrder);
+    g.innerHTML=(!S.gal.length?'<div class="warn" id="gl-imp" style="background:#4f46e51a;border-color:#4f46e566;color:#c7d2fe">المتجر بيعرض حاليًا 6 صور افتراضية (صور التصوير بتاعتكم). عشان تعدّلها أو تحذف منها: <button class="btn s" onclick="glImportDefaults()">نقل الصور الافتراضية للوحة</button></div>':'')
+     +(gl.map((x,i)=>`<div class="mrow ${x.hidden?'off':''}"><img class="mi gl" src="${esc(x.url)}" alt=""><input class="field mc" maxlength="90" value="${esc(x.caption||'')}" placeholder="الهوك / العبارة" data-id="${esc(x._id)}" onchange="capMedia(this.dataset.id,this.value)">${mAct('gallery',x,i,gl.length)}</div>`).join('')||'<p class="mut">المعرض فاضي — مش هيظهر في المتجر لحد ما تضيف صور.</p>');
+  }
 };
 })();
 </script>
